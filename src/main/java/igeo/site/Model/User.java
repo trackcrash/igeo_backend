@@ -3,6 +3,7 @@
  import lombok.Builder;
  import lombok.Getter;
  import lombok.NoArgsConstructor;
+ import lombok.Setter;
  import org.springframework.security.crypto.password.PasswordEncoder;
  import igeo.site.DTO.CreateUserDto;
  import jakarta.persistence.*;
@@ -11,6 +12,7 @@
  @NoArgsConstructor
  @Entity
  @Getter
+ @Setter
  public class User {
      @Id
      @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,6 +61,4 @@
                  .build();
          return user;
      }
-
-
  }

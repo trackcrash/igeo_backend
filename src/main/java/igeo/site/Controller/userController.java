@@ -2,6 +2,7 @@
 
  import lombok.RequiredArgsConstructor;
  import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.security.access.prepost.PreAuthorize;
  import org.springframework.security.crypto.password.PasswordEncoder;
  import org.springframework.stereotype.Controller;
  import org.springframework.ui.Model;
@@ -54,4 +55,16 @@
          return "redirect:/";
      }
 
+     @GetMapping("/delete_account_confirm")
+     @PreAuthorize("isAuthenticated()")
+     public String  DeleteAccountConfirm()
+     {
+        return "user/DeleteAccountConfirm";
+     }
+
+     @GetMapping("/delete_account")
+     public String DeleteAccount()
+     {
+        return "";
+     }
  }
