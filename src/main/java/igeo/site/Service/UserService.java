@@ -1,7 +1,8 @@
  package igeo.site.Service;
 
+ import igeo.site.Config.SpringSecurityConfig;
+ import lombok.Getter;
  import lombok.RequiredArgsConstructor;
- import org.apache.logging.log4j.message.Message;
  import org.springframework.beans.factory.annotation.Autowired;
  import org.springframework.security.core.Authentication;
  import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,9 +15,24 @@
 
  import java.util.List;
 
+
  @RequiredArgsConstructor
  @Service
  public class UserService implements UserDetailsService {
+     @Getter
+     public enum stateCode {
+         DUPLICATED_EMAIL(400),
+         DUPLICATED_NICKNAME(401),
+         PASSWORD_NOT_OK(402),
+         NOT_AUTHENTICATED(403),
+         UNKNWON_EXCEPTION(404),
+         OK(200);
+         private final int state;
+         stateCode(int state) {
+             this.state = state;
+         }
+
+     }
      @Autowired
      private UserRepository userRepository;
 
@@ -24,55 +40,75 @@
          // 현재 사용자 정보 가져오기
          Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
          User currentUser = (User) authentication.getDetails();
-
          return currentUser;
      }
+
      public User save(User user){
-         checkDuplicateUser(user);
-         return userRepository.save(user);
+         if(checkDuplicateUserEmail(user)) return userRepository.save(user);
+         return null;
      }
+
      public boolean isAuthenticated() {
          Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
          return authentication != null && authentication.isAuthenticated();
      }
 
-     private void checkDuplicateUser(User user){
+     private boolean checkDuplicateUserEmail(User user){
          User findUser = userRepository.findByEmail(user.getEmail());
-         if (findUser != null){
-             throw new IllegalStateException("이미 가입된 아이디입니다");
-         }
+         return findUser == null;
      }
-     public void checkDuplicateUserNickName(String nickName)
+     public boolean checkDuplicateUserNickName(String nickName)
      {
          List<User> findAll = userRepository.findAll();
-         if(nickName.isBlank())
-         {
-            throw new IllegalStateException("공백 닉네임은 이용이 불가능 합니다.");
+         for (User user : findAll) {
+             if (user.getName().equals(nickName)) return false;
          }
-         findAll.forEach(user->
-         {
-            if(user.getName().equals(nickName))
-            {
-                throw new IllegalStateException("다른 사용자가 이용중인 닉네임 입니다.");
-            }
-         });
+         return true;
      }
 
-     public void UserProfileChange(String nickName, String password, String newPassword)
+     private User userNickNameChange( User user, String nickName)
      {
-        if(isAuthenticated())
-        {
-            try
-            {
-                User user = getCurrentUser();
-                checkDuplicateUserNickName(nickName);
-                user.setName(nickName);
-                userRepository.save(user);
-            }catch (IllegalStateException ex)
-            {
-                System.out.println(ex);
-            }
-        }
+         if(nickName.isBlank()) return user;
+         if(!checkDuplicateUserNickName(nickName)) return null;
+         user.setName(nickName);
+         return user;
+     }
+     private User userPasswordChange( User user, String password, String newPassword)
+     {
+         SpringSecurityConfig springSecurityConfig = new SpringSecurityConfig();
+
+         String HashedNewPassword = springSecurityConfig.passwordEncoder().encode(password);
+
+         if (!user.getPassword().equals(HashedNewPassword)) {
+             return null;
+         }
+         String existingPassword = user.getPassword();
+         HashedNewPassword = springSecurityConfig.passwordEncoder().encode(newPassword);
+         boolean resultBool = HashedNewPassword.equals(existingPassword);
+         if(resultBool || newPassword.isBlank()) return user;
+         user.setPassword(HashedNewPassword);
+         return user;
+     }
+     public int UserProfileChange(String nickName, String password, String newPassword) {
+         try {
+             User user = getCurrentUser();
+             user = userPasswordChange(user, password,newPassword);
+             if(user == null)
+             {
+                System.out.println("기존 비밀번호가 틀렸습니다.");
+                return stateCode.PASSWORD_NOT_OK.getState();
+             }
+             user = userNickNameChange(user, nickName);
+             if(user == null)
+             {
+                System.out.println("다른 유저가 이용중인 닉네임입니다.");
+                return stateCode.DUPLICATED_NICKNAME.getState();
+             }
+             userRepository.save(user);
+         } catch (Exception ex) {
+             System.out.println(ex);
+         }
+         return stateCode.OK.getState();
      }
 
      @Override
@@ -88,21 +124,26 @@
      }
 
 
-     public boolean deleteAccount()
+     public int deleteAccount()
      {
-         if(isAuthenticated())
-         {
-            try
-            {
-                User currentUser = getCurrentUser();
-                userRepository.delete(currentUser);
-                return true;
-            }catch(Exception ex)
-            {
-                System.out.printf("An error occurred while deleting the account: %s%n", ex);
-                return false;
-            }
-         }
-         return false;
+        if(!isAuthenticated()) return stateCode.NOT_AUTHENTICATED.getState();
+        try
+        {
+            User currentUser = getCurrentUser();
+            userRepository.delete(currentUser);
+            return stateCode.OK.getState();
+        }catch(Exception ex)
+        {
+            System.out.printf("An error occurred while deleting the account: %s%n", ex);
+            return stateCode.UNKNWON_EXCEPTION.getState();
+        }
      }
+     public int insertCharacterNumber(int characterNumber)
+     {
+        if(!isAuthenticated()) return stateCode.NOT_AUTHENTICATED.getState();
+        User currentUser = getCurrentUser();
+        currentUser.setCharacter(characterNumber);
+        return stateCode.OK.getState();
+     }
+
  }

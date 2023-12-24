@@ -1,5 +1,6 @@
  package igeo.site.Controller;
 
+ import com.nimbusds.jose.shaded.gson.Gson;
  import lombok.RequiredArgsConstructor;
  import org.springframework.beans.factory.annotation.Autowired;
  import org.springframework.security.access.prepost.PreAuthorize;
@@ -9,12 +10,14 @@
  import org.springframework.validation.BindingResult;
  import org.springframework.web.bind.annotation.GetMapping;
  import org.springframework.web.bind.annotation.PostMapping;
+ import org.springframework.web.bind.annotation.RequestBody;
  import org.springframework.web.bind.annotation.RequestMapping;
  import igeo.site.DTO.CreateUserDto;
  import igeo.site.Model.User;
  import igeo.site.Service.UserService;
 
  import javax.validation.Valid;
+ import java.util.*;
 
  @RequiredArgsConstructor
  @Controller
@@ -30,7 +33,20 @@
      //로그인
      @GetMapping ("/login")
      public String login(){
-         return "user/login";
+     Map<String, Object> data = new HashMap<>();
+     int state=UserService.stateCode.OK.getState();
+     data.put("state", state);
+     Gson gson = new Gson();
+     String json = gson.toJson(data);
+     return json;
+     }
+     @PostMapping("login")
+     public String handleLoginPostRequest(@RequestBody Map<String,String> map)
+     {
+        String email = map.get("email");
+        String password = map.get("password");
+        //로그인 로직
+        return "";
      }
 
      //회원가입
@@ -40,19 +56,20 @@
          return "user/register";
      }
 
+
      @PostMapping("/register")
      public String register(@Valid CreateUserDto createUserDto, BindingResult bindingResult, Model model){
          if (bindingResult.hasErrors()){
              return "user/register";
          }
-         try {
-             User user = User.createUser(createUserDto, passwordEncoder);
-             userService.save(user);
-         } catch (IllegalStateException e){
-             model.addAttribute("errorMessage", e.getMessage());
+         User user = User.createUser(createUserDto, passwordEncoder);
+         if(userService.save(user) == null)
+         {
+             model.addAttribute("errorMessage");
              return "user/register";
          }
          return "redirect:/";
+
      }
 
      @GetMapping("/delete_account_confirm")

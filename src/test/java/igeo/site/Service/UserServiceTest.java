@@ -106,10 +106,10 @@ class UserServiceTest {
         when(userService.isAuthenticated()).thenReturn(false);
 
         // when
-        boolean deletionResult = userService.deleteAccount();
+        int deletionResult = userService.deleteAccount();
 
         // then
-        assertFalse(deletionResult);
+        assertEquals(deletionResult,UserService.stateCode.NOT_AUTHENTICATED.getState());
         verify(userRepository, never()).delete(any());
     }
 
@@ -135,10 +135,10 @@ class UserServiceTest {
         when(userService.isAuthenticated()).thenReturn(true);
 
         // when
-        boolean deletionResult = userService.deleteAccount();
+        int deletionResult = userService.deleteAccount();
 
         // then
-        assertTrue(deletionResult);
+        assertEquals(deletionResult,UserService.stateCode.OK.getState());
         verify(userRepository, times(1)).delete(savedUser);
     }
 
@@ -168,10 +168,10 @@ class UserServiceTest {
         doThrow(new RuntimeException("Simulated deletion error")).when(userRepository).delete(savedUser);
 
         // when
-        boolean deletionResult = userService.deleteAccount();
+        int deletionResult = userService.deleteAccount();
 
         // then
-        assertFalse(deletionResult);
+        assertEquals(deletionResult,UserService.stateCode.UNKNWON_EXCEPTION.getState());
 
         // Verify that delete is called with the correct user instance
         verify(userRepository, times(1)).delete(eq(savedUser));
