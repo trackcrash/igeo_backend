@@ -13,6 +13,7 @@
  @Entity
  @Getter
  @Setter
+ @Table(name="UserTable")
  public class User {
      @Id
      @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,13 +25,13 @@
      private int exp;
      private int nextExp;
      private int character;
-     private LocalDateTime lastLogin;
-     private boolean isGoogleAuthenticated;
+     private LocalDateTime last_login;
+     private boolean is_google_authenticated;
      private String permissions;
-     private String profileBackground;
+     private String profile_background;
 
      @Builder
-     public User(Long id, String name, String password, String email, int level, int exp, int nextExp, int character, LocalDateTime lastLogin, boolean isGoogleAuthenticated, String permissions, String profileBackground) {
+     public User(Long id, String name, String password, String email, int level, int exp, int nextExp, int character, LocalDateTime last_login, boolean is_google_authenticated, String permissions, String profile_background) {
          this.id = id;
          this.name = name;
          this.password = password;
@@ -39,10 +40,10 @@
          this.exp = exp;
          this.nextExp = nextExp;
          this.character = character;
-         this.lastLogin = lastLogin;
-         this.isGoogleAuthenticated = isGoogleAuthenticated;
+         this.last_login = last_login;
+         this.is_google_authenticated = is_google_authenticated;
          this.permissions = permissions;
-         this.profileBackground = profileBackground;
+         this.profile_background = profile_background;
      }
 
      public static User createUser(CreateUserDto createUserDto, PasswordEncoder passwordEncoder){
@@ -54,10 +55,10 @@
                  .exp(0)
                  .nextExp(10)
                  .character(0)
-                 .lastLogin(LocalDateTime.now())
-                 .isGoogleAuthenticated(false)
+                 .last_login(LocalDateTime.now())
+                 .is_google_authenticated(false)
                  .permissions("0")
-                 .profileBackground("")
+                 .profile_background("")
                  .build();
          return user;
      }

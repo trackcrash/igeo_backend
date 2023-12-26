@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @Getter
-@Table(name = "MusicTable")
+@Table(name="MusicTable")
 public class Music {
 
     //PK

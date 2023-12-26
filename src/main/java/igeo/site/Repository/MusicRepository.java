@@ -2,6 +2,7 @@ package igeo.site.Repository;
 
 import igeo.site.Model.Mission;
 import igeo.site.Model.Music;
+import jakarta.persistence.Table;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

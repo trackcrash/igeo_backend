@@ -45,9 +45,8 @@
          http
                  .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
                  .csrf(AbstractHttpConfigurer::disable)
-                 .authorizeRequests(authz -> authz
+                 .authorizeHttpRequests(authz -> authz
                          .requestMatchers("/**").permitAll()
-                         // .antMatchers("/booking/check").hasRole("ADMIN")
                          .anyRequest().authenticated()
                  )
                  .formLogin(form -> form

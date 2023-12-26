@@ -13,9 +13,12 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class MusicService {
+
     @Autowired
     private MusicRepository musicRepository;
 
+    //missionId로 음악 리스트 가져오기
+    //결과값 : 음악 리스트
     public List<Music> getMusicByMission(Long id) {
         return musicRepository.findByMission_Id(id);
     }

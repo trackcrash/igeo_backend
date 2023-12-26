@@ -16,7 +16,7 @@
  import igeo.site.Model.User;
  import igeo.site.Service.UserService;
 
- import javax.validation.Valid;
+ import jakarta.validation.Valid;
  import java.util.*;
 
  @RequiredArgsConstructor
