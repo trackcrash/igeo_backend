@@ -4,10 +4,12 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @NoArgsConstructor
 @Getter
+@Setter
 @Table(name="MissionTable")
 public class Mission {
     @Id
@@ -16,7 +18,7 @@ public class Mission {
     private String MapName;
     private String MapProducer;
     private String Thumbnail;
-    private String active;
+    private boolean active;
     private int PlayNum;
     private String Description;
     @ManyToOne
@@ -24,7 +26,7 @@ public class Mission {
     private User user;
 
     @Builder
-    public Mission(Long id, String MapName, String MapProducer, String Thumbnail, String active, int PlayNum, String Description, User user) {
+    public Mission(Long id, String MapName, String MapProducer, String Thumbnail, boolean active, int PlayNum, String Description, User user) {
         this.id = id;
         this.MapName = MapName;
         this.MapProducer = MapProducer;
@@ -35,7 +37,7 @@ public class Mission {
         this.user = user;
     }
 
-    public static Mission createMission(String MapName, String MapProducer, String Thumbnail, String active, int PlayNum, String Description, User user) {
+    public static Mission createMission(String MapName, String MapProducer, String Thumbnail, boolean active, int PlayNum, String Description, User user) {
         Mission mission = Mission.builder()
                 .MapName(MapName)
                 .MapProducer(MapProducer)

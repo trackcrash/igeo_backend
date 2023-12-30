@@ -4,12 +4,14 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 //음악 테이블 - 미션 테이블과 1:N 관계
 //Lombok 사용됨
 @Entity
 @NoArgsConstructor
 @Getter
+@Setter
 @Table(name="MusicTable")
 public class Music {
 
@@ -47,22 +49,6 @@ public class Music {
         this.category = category;
     }
 
-    //Create method
-    public static Music createMusic(String title, String song, String youtube_url, String thumbnail_url, String answer, String hint, Mission mission, Float startTime, Float endTime, String category) {
-        Music music = Music.builder()
-                .title(title)
-                .song(song)
-                .youtube_url(youtube_url)
-                .thumbnail_url(thumbnail_url)
-                .answer(answer)
-                .hint(hint)
-                .mission(mission)
-                .startTime(startTime)
-                .endTime(endTime)
-                .category(category)
-                .build();
-        return music;
-    }
 }
 
 
