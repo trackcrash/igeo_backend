@@ -15,6 +15,7 @@
  import org.springframework.security.crypto.password.PasswordEncoder;
  import org.springframework.security.web.SecurityFilterChain;
  import igeo.site.Service.UserService;
+ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
  import org.springframework.web.cors.CorsConfiguration;
  import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -46,11 +47,11 @@
                  .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
                  .csrf(AbstractHttpConfigurer::disable)
                  .authorizeHttpRequests(authz -> authz
-                         .requestMatchers("/**").permitAll()
+                         .requestMatchers(new AntPathRequestMatcher("/User")).permitAll()
                          .anyRequest().authenticated()
                  )
                  .formLogin(form -> form
-                         .loginPage("/account/login")
+                         .loginPage("/User/login")
                          .permitAll()
                  )
                  .logout(logout -> logout

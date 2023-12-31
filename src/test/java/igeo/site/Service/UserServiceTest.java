@@ -171,7 +171,7 @@ class UserServiceTest {
         int deletionResult = userService.deleteAccount();
 
         // then
-        assertEquals(deletionResult,UserService.stateCode.UNKNWON_EXCEPTION.getState());
+        assertEquals(deletionResult,UserService.stateCode.UNKNOWN_EXCEPTION.getState());
 
         // Verify that delete is called with the correct user instance
         verify(userRepository, times(1)).delete(eq(savedUser));

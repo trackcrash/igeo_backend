@@ -1,24 +1,22 @@
  package igeo.site.Controller;
 
- import com.nimbusds.jose.shaded.gson.Gson;
+ import lombok.Getter;
  import lombok.RequiredArgsConstructor;
  import org.springframework.beans.factory.annotation.Autowired;
  import org.springframework.security.access.prepost.PreAuthorize;
+ import org.springframework.security.authentication.AuthenticationManager;
  import org.springframework.security.crypto.password.PasswordEncoder;
  import org.springframework.stereotype.Controller;
  import org.springframework.ui.Model;
  import org.springframework.validation.BindingResult;
- import org.springframework.web.bind.annotation.GetMapping;
- import org.springframework.web.bind.annotation.PostMapping;
- import org.springframework.web.bind.annotation.RequestBody;
- import org.springframework.web.bind.annotation.RequestMapping;
+ import org.springframework.web.bind.annotation.*;
  import igeo.site.DTO.CreateUserDto;
  import igeo.site.Model.User;
  import igeo.site.Service.UserService;
 
  import jakarta.validation.Valid;
- import java.util.*;
 
+ @RestController
  @RequiredArgsConstructor
  @Controller
  @RequestMapping("/user")
@@ -28,25 +26,19 @@
      private UserService userService;
 
      @Autowired
+     AuthenticationManager authenticationManager;
+     @Autowired
      private PasswordEncoder passwordEncoder;
 
      //로그인
-     @GetMapping ("/login")
-     public String login(){
-     Map<String, Object> data = new HashMap<>();
-     int state=UserService.stateCode.OK.getState();
-     data.put("state", state);
-     Gson gson = new Gson();
-     String json = gson.toJson(data);
-     return json;
-     }
      @PostMapping("login")
-     public String handleLoginPostRequest(@RequestBody Map<String,String> map)
+     public String handleLoginPostRequest(@RequestBody LoginRequest loginRequest)
      {
-        String email = map.get("email");
-        String password = map.get("password");
+            String email = loginRequest.getEmail();
+            String password = loginRequest.getPassword();
+            String loginState = userService.login(email, password ,authenticationManager , passwordEncoder);
         //로그인 로직
-        return "";
+        return loginState;
      }
 
      //회원가입
