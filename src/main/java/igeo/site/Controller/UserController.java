@@ -1,13 +1,10 @@
  package igeo.site.Controller;
 
- import igeo.site.Config.SpringSecurityConfig;
- import lombok.Getter;
+ import igeo.site.DTO.UserLoginDto;
  import lombok.RequiredArgsConstructor;
- import org.aspectj.weaver.AjAttribute;
  import org.springframework.beans.factory.annotation.Autowired;
  import org.springframework.security.access.prepost.PreAuthorize;
  import org.springframework.security.authentication.AuthenticationManager;
- import org.springframework.security.core.context.SecurityContextHolder;
  import org.springframework.security.crypto.password.PasswordEncoder;
  import org.springframework.ui.Model;
  import org.springframework.validation.BindingResult;
@@ -17,8 +14,6 @@
  import igeo.site.Service.UserService;
 
  import jakarta.validation.Valid;
-
- import javax.swing.*;
 
  @RestController
  @RequiredArgsConstructor
@@ -34,7 +29,7 @@
 
      //로그인
      @PostMapping("login")
-     public String handleLoginPostRequest(@RequestBody LoginRequest loginRequest)
+     public String handleLoginPostRequest(@RequestBody UserLoginDto loginRequest)
      {
             String email = loginRequest.getEmail();
             String password = loginRequest.getPassword();

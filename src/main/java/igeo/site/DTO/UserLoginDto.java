@@ -1,10 +1,10 @@
-package igeo.site.Controller;
+package igeo.site.DTO;
 
 import lombok.Getter;
 
 
 @Getter
-public class LoginRequest {
+public class UserLoginDto {
     private String email;
     private String password;
 
