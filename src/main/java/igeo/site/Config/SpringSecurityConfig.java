@@ -47,7 +47,7 @@
                  .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
                  .csrf(AbstractHttpConfigurer::disable)
                  .authorizeHttpRequests(authz -> authz
-                         .requestMatchers(new AntPathRequestMatcher("/User")).permitAll()
+                         .requestMatchers(new AntPathRequestMatcher("/**")).permitAll()
                          .anyRequest().authenticated()
                  )
                  .formLogin(form -> form
