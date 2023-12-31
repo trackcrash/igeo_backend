@@ -17,7 +17,6 @@
 
  @RestController
  @RequiredArgsConstructor
- @RestController
  @RequestMapping("/user")
  public class UserController {
 
