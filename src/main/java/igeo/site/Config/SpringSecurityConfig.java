@@ -51,7 +51,7 @@
                          .anyRequest().authenticated()
                  )
                  .formLogin(form -> form
-                         .loginPage("/User/login")
+                         .loginPage("/user/login")
                          .permitAll()
                  )
                  .logout(logout -> logout

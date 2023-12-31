@@ -1,10 +1,13 @@
  package igeo.site.Controller;
 
+ import igeo.site.Config.SpringSecurityConfig;
  import lombok.Getter;
  import lombok.RequiredArgsConstructor;
+ import org.aspectj.weaver.AjAttribute;
  import org.springframework.beans.factory.annotation.Autowired;
  import org.springframework.security.access.prepost.PreAuthorize;
  import org.springframework.security.authentication.AuthenticationManager;
+ import org.springframework.security.core.context.SecurityContextHolder;
  import org.springframework.security.crypto.password.PasswordEncoder;
  import org.springframework.ui.Model;
  import org.springframework.validation.BindingResult;
@@ -15,6 +18,8 @@
 
  import jakarta.validation.Valid;
 
+ import javax.swing.*;
+
  @RestController
  @RequiredArgsConstructor
  @RequestMapping("/user")
@@ -22,9 +27,8 @@
 
      @Autowired
      private UserService userService;
-
      @Autowired
-     AuthenticationManager authenticationManager;
+     private AuthenticationManager authenticationManager; // 추가
      @Autowired
      private PasswordEncoder passwordEncoder;
 
@@ -40,11 +44,11 @@
      }
 
      //회원가입
-     @GetMapping("/register")
-     public String register(Model model){
-         model.addAttribute("CreateUserDto",new CreateUserDto());
-         return "user/register";
-     }
+//     @GetMapping("/register")
+//     public String register(Model model){
+//         model.addAttribute("CreateUserDto",new CreateUserDto());
+//         return "user/register";
+//     }
 
 
      @PostMapping("/register")

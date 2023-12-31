@@ -166,10 +166,15 @@
 
              return token;
          } catch (BadCredentialsException e) {
+             System.out.println(e);
              return Integer.toString(stateCode.INVALID_PASSWORD.getState());
          } catch (UsernameNotFoundException e) {
+             System.out.println(e);
+
              return Integer.toString(stateCode.INVALID_EMAIL.getState());
          } catch (Exception e) {
+             System.out.println(e);
+
              return Integer.toString(stateCode.UNKNOWN_EXCEPTION.getState());
          }
      }
