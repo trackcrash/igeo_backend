@@ -26,8 +26,6 @@
  @EnableWebSecurity
  public class SpringSecurityConfig {
 
-     @Autowired
-     UserService userService;
 
 
      CorsConfigurationSource corsConfigurationSource() {
@@ -65,11 +63,6 @@
      @Bean
      public PasswordEncoder passwordEncoder() {
          return new BCryptPasswordEncoder();
-     }
-
-     @Bean
-     public UserDetailsService userDetailsService() {
-         return userService;
      }
 
      @Bean

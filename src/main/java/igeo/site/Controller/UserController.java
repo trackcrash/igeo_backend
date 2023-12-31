@@ -3,14 +3,13 @@
  import igeo.site.DTO.UserLoginDto;
  import lombok.RequiredArgsConstructor;
  import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.http.HttpStatus;
+ import org.springframework.http.ResponseEntity;
  import org.springframework.security.access.prepost.PreAuthorize;
- import org.springframework.security.authentication.AuthenticationManager;
- import org.springframework.security.crypto.password.PasswordEncoder;
- import org.springframework.ui.Model;
+ import org.springframework.security.authentication.BadCredentialsException;
  import org.springframework.validation.BindingResult;
  import org.springframework.web.bind.annotation.*;
  import igeo.site.DTO.CreateUserDto;
- import igeo.site.Model.User;
  import igeo.site.Service.UserService;
 
  import jakarta.validation.Valid;
@@ -22,43 +21,37 @@
 
      @Autowired
      private UserService userService;
-     @Autowired
-     private AuthenticationManager authenticationManager; // 추가
-     @Autowired
-     private PasswordEncoder passwordEncoder;
+
 
      //로그인
-     @PostMapping("login")
-     public String handleLoginPostRequest(@RequestBody UserLoginDto loginRequest)
-     {
-            String email = loginRequest.getEmail();
-            String password = loginRequest.getPassword();
-            String loginState = userService.login(email, password ,authenticationManager , passwordEncoder);
-        //로그인 로직
-        return loginState;
+     @PostMapping("/login")
+     public ResponseEntity<?> handleLoginPostRequest(@Valid @RequestBody UserLoginDto userLoginDto, BindingResult bindingResult) {
+         if (bindingResult.hasErrors()) {
+             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid request.");
+         }
+         try {
+             String token = userService.Login(userLoginDto);
+             return ResponseEntity.ok().body(token); // JWT 토큰 반환
+         } catch (BadCredentialsException e) {
+             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password.");
+         } catch (Exception e) {
+             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while processing your request.");
+         }
      }
 
-     //회원가입
-//     @GetMapping("/register")
-//     public String register(Model model){
-//         model.addAttribute("CreateUserDto",new CreateUserDto());
-//         return "user/register";
-//     }
 
 
      @PostMapping("/register")
-     public String register(@Valid CreateUserDto createUserDto, BindingResult bindingResult, Model model){
-         if (bindingResult.hasErrors()){
-             return "user/register";
+     public ResponseEntity<?> register(@Valid @RequestBody CreateUserDto createUserDto, BindingResult bindingResult){
+         if(bindingResult.hasErrors()){
+             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid request.");
          }
-         User user = User.createUser(createUserDto, passwordEncoder);
-         if(userService.save(user) == null)
-         {
-             model.addAttribute("errorMessage");
-             return "user/register";
+         try{
+             userService.save(createUserDto);
+             return ResponseEntity.ok().body("User registered successfully!");
+         }catch (Exception e){
+             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while processing your request.");
          }
-         return "redirect:/";
-
      }
 
      @GetMapping("/delete_account_confirm")

@@ -3,10 +3,15 @@ package igeo.site.Service;
 import igeo.site.DTO.MissionDto;
 import igeo.site.Model.Mission;
 
+import igeo.site.Model.User;
 import igeo.site.Repository.MissionRepository;
 import igeo.site.Repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -52,6 +57,16 @@ public class MissionService {
         Mission mission = missionRepository.findById(missionId).orElseThrow(
                 () -> new IllegalStateException("존재하지 않는 미션입니다.")
         );
+        /*// 사용자 인증 정보 확인
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findByEmail(userDetails.getUsername());
+        if(user == null) throw new EntityNotFoundException("잘못된 접근입니다");
+
+        // 권한 확인
+        if (!mission.getUser().getId().equals(user.getId())) {
+            throw new AccessDeniedException("잘못된 접근입니다");
+        }*/
+
         mission.setMapName(missionDto.getMapName());
         mission.setMapProducer(missionDto.getMapProducer());
         mission.setThumbnail(missionDto.getThumbnail());
@@ -68,9 +83,15 @@ public class MissionService {
 
     //미션 삭제
     public void deleteMission(Long missionId) {
+
         Mission mission = missionRepository.findById(missionId).orElseThrow(
                 () -> new IllegalStateException("존재하지 않는 미션입니다.")
         );
+
+        /*// 사용자 인증 정보 확인
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findByEmail(userDetails.getUsername());
+        if(user == null) throw new EntityNotFoundException("잘못된 접근입니다");*/
         missionRepository.delete(mission);
     }
 }
