@@ -1,6 +1,5 @@
  package igeo.site.Config;
 
- import org.springframework.beans.factory.annotation.Autowired;
  import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
  import org.springframework.context.annotation.Bean;
  import org.springframework.context.annotation.Configuration;
@@ -10,11 +9,9 @@
  import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
  import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
  import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
- import org.springframework.security.core.userdetails.UserDetailsService;
  import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
  import org.springframework.security.crypto.password.PasswordEncoder;
  import org.springframework.security.web.SecurityFilterChain;
- import igeo.site.Service.UserService;
  import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
  import org.springframework.web.cors.CorsConfiguration;
  import org.springframework.web.cors.CorsConfigurationSource;
@@ -25,8 +22,6 @@
  @Configuration
  @EnableWebSecurity
  public class SpringSecurityConfig {
-
-
 
      CorsConfigurationSource corsConfigurationSource() {
          return request -> {
@@ -49,7 +44,7 @@
                          .anyRequest().authenticated()
                  )
                  .formLogin(form -> form
-                         .loginPage("/user/login")
+                         .loginPage("/user")
                          .permitAll()
                  )
                  .logout(logout -> logout
