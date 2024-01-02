@@ -57,6 +57,7 @@ public class MissionService {
         Mission mission = missionRepository.findById(missionId).orElseThrow(
                 () -> new IllegalStateException("존재하지 않는 미션입니다.")
         );
+        //TODO: 유저기능 완성후 주석 해제
         /*// 사용자 인증 정보 확인
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findByEmail(userDetails.getUsername());
@@ -87,7 +88,7 @@ public class MissionService {
         Mission mission = missionRepository.findById(missionId).orElseThrow(
                 () -> new IllegalStateException("존재하지 않는 미션입니다.")
         );
-
+        //TODO: 유저기능 완성후 주석 해제
         /*// 사용자 인증 정보 확인
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findByEmail(userDetails.getUsername());
