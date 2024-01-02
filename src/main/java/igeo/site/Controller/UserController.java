@@ -6,7 +6,9 @@
  import org.springframework.http.HttpStatus;
  import org.springframework.http.ResponseEntity;
  import org.springframework.security.access.prepost.PreAuthorize;
+ import org.springframework.security.authentication.AuthenticationManager;
  import org.springframework.security.authentication.BadCredentialsException;
+ import org.springframework.security.core.userdetails.UsernameNotFoundException;
  import org.springframework.validation.BindingResult;
  import org.springframework.web.bind.annotation.*;
  import igeo.site.DTO.CreateUserDto;
@@ -21,7 +23,8 @@
 
      @Autowired
      private UserService userService;
-
+     @Autowired
+     private AuthenticationManager authenticationManager;
 
      //로그인
      @PostMapping("/login")
@@ -30,11 +33,15 @@
              return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid request.");
          }
          try {
-             String token = userService.Login(userLoginDto);
-             return ResponseEntity.ok().body(token); // JWT 토큰 반환
-         } catch (BadCredentialsException e) {
-             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password.");
+             return userService.Login(userLoginDto, authenticationManager); // JWT 토큰 반환
+         }catch(UsernameNotFoundException e)
+         {
+             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+         }
+         catch (BadCredentialsException e) {
+             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid password.");
          } catch (Exception e) {
+             System.out.println(e);
              return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while processing your request.");
          }
      }
