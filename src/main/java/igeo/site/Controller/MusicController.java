@@ -1,7 +1,6 @@
 package igeo.site.Controller;
 
 import igeo.site.DTO.MusicDto;
-import igeo.site.Model.Music;
 import igeo.site.Service.MusicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

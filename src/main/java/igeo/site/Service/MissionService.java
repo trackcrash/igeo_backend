@@ -3,16 +3,13 @@ package igeo.site.Service;
 import igeo.site.DTO.MissionDto;
 import igeo.site.Model.Mission;
 
-import igeo.site.Model.User;
 import igeo.site.Repository.MissionRepository;
 import igeo.site.Repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -94,5 +91,11 @@ public class MissionService {
         User user = userRepository.findByEmail(userDetails.getUsername());
         if(user == null) throw new EntityNotFoundException("잘못된 접근입니다");*/
         missionRepository.delete(mission);
+    }
+
+    //미션 조회
+    public List<Mission> getMission(){
+        List<Mission> missions = missionRepository.findAll();
+        return missions;
     }
 }
