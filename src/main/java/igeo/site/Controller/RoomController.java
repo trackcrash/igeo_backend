@@ -10,8 +10,11 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class RoomController {
 
+    private final RoomService roomService;
     @Autowired
-    private RoomService roomService;
+    public RoomController(RoomService roomService) {
+        this.roomService = roomService;
+    }
 
     @PostMapping("/room_list/create")
     public ResponseEntity<?> createRoom(@Valid @RequestBody CreateRoomDto createRoomDto) {

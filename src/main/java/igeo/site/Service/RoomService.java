@@ -12,10 +12,16 @@ import java.util.List;
 
 @Service
 public class RoomService {
-    @Autowired
-    private UserService userService;
 
-    private final RoomTracker roomTracker = new RoomTracker();
+    private final UserService userService;
+    private final RoomTracker roomTracker;
+
+    @Autowired
+    public RoomService(UserService userService, RoomTracker roomTracker) {
+        this.userService = userService;
+        this.roomTracker = roomTracker;
+    }
+
     //방생성
     public Room createRoom(CreateRoomDto createRoomDto) {
         User user = userService.getUserByName(createRoomDto.getSender());
@@ -45,7 +51,7 @@ public class RoomService {
         User user = userService.getUserByName(userName);
         roomTracker.leaveRoom(roomId, user);
         if (roomTracker.getRoom(roomId).getCurrentUsers() == 0) {
-            deleteRoom(roomId);
+            roomTracker.deleteRoom(roomId);
         }
     }
 

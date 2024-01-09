@@ -6,11 +6,13 @@ import igeo.site.Model.Room;
 import igeo.site.Model.User;
 import igeo.site.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 //방 생성 및 추적을 위한 클래스
+@Component
 public class RoomTracker {
 
     private final ConcurrentHashMap<String, Room> rooms = new ConcurrentHashMap<>();
@@ -39,9 +41,6 @@ public class RoomTracker {
     //퇴장
     public void leaveRoom(String roomId, User user) {
         rooms.get(roomId).removeUser(user.getId());
-        if(rooms.get(roomId).getCurrentUsers() == 0) {
-            deleteRoom(roomId);
-        }
     }
 
     public Room getRoom(String roomId) {

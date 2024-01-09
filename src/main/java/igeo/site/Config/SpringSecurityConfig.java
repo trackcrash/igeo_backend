@@ -1,5 +1,7 @@
  package igeo.site.Config;
 
+ import igeo.site.Game.MissionTracker;
+ import igeo.site.Game.RoomTracker;
  import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
  import org.springframework.context.annotation.Bean;
  import org.springframework.context.annotation.Configuration;
@@ -64,7 +66,14 @@
      public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
          return authenticationConfiguration.getAuthenticationManager();
      }
-
+     @Bean
+     public RoomTracker roomTracker() {
+         return new RoomTracker();
+     }
+     @Bean
+     public MissionTracker missionTracker() {
+         return new MissionTracker();
+     }
      @Bean
      public WebSecurityCustomizer webSecurityCustomizer() {
          return (web) -> web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());

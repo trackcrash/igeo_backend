@@ -2,6 +2,7 @@ package igeo.site.Service;
 
 import igeo.site.DTO.MusicDto;
 import igeo.site.Game.MissionTracker;
+import igeo.site.Model.Answer;
 import igeo.site.Model.Mission;
 import igeo.site.Model.Music;
 import igeo.site.Repository.MusicRepository;
@@ -12,14 +13,17 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class MusicService {
 
-    @Autowired
-    private MusicRepository musicRepository;
+    private final MusicRepository musicRepository;
 
     //음악관리를 위한 tracker 사용
-    private MissionTracker tracker = new MissionTracker();
+    private final MissionTracker tracker;
+    @Autowired
+    public MusicService(MissionTracker tracker, MusicRepository musicRepository) {
+        this.tracker = tracker;
+        this.musicRepository = musicRepository;
+    }
 
     //missionId로 음악 리스트 가져오기
     //결과값 : 음악 리스트
@@ -67,6 +71,9 @@ public class MusicService {
 
     }
 
+    public boolean checkAnswer(Long roomId, String userAnswer) {
+        return tracker.checkAnswer(roomId, userAnswer);
+    }
     //음악 삭제
     public void delete(Music music) {
         musicRepository.delete(music);
@@ -74,19 +81,35 @@ public class MusicService {
 
     //게임 시작시 음악 리스트 가져오기
     public MusicDto startMission(Long roomId, Long missionId) {
-        List<Music> missionList = getMusicByMission(missionId);
-        tracker.shuffleMusic(missionList);
-        tracker.setMusicList(roomId, missionList);
+        List<Music> musicList = getMusicByMission(missionId);
+        tracker.shuffleMusic(musicList);
+        tracker.setMusicList(roomId, musicList);
         tracker.setCurrentMusic(roomId, 0);
-        if (!missionList.isEmpty()) {
-            return transferMusicData(missionList, 0);
+        Music currentMusic = musicList.get(0);
+        String rawAnswer = currentMusic.getAnswer();
+        String categoryData = currentMusic.getCategory();
+        tracker.createAnswer(roomId, rawAnswer, categoryData);
+        if (!musicList.isEmpty()) {
+            return transferMusicData(musicList, 0);
         }
         return null;
     }
 
+    public Answer getCurrentAnswer(Long roomId) {
+        return tracker.getAnswer(roomId);
+    }
     // 다음 음악으로 넘어가기
     public MusicDto getNextMusic(Long roomId) {
         tracker.nextMusic(roomId);
+        List<Music> missionList = tracker.getMusicList(roomId);
+        int currentIndex = tracker.getCurrentMusicIndex(roomId);
+        if (currentIndex >= 0 && currentIndex < missionList.size()) {
+            return transferMusicData(missionList, currentIndex);
+        }
+        return null;
+    }
+
+    public MusicDto getMusic(Long roomId) {
         List<Music> missionList = tracker.getMusicList(roomId);
         int currentIndex = tracker.getCurrentMusicIndex(roomId);
         if (currentIndex >= 0 && currentIndex < missionList.size()) {

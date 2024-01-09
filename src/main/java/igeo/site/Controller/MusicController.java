@@ -27,5 +27,13 @@ public class MusicController {
         MusicDto musicDto = musicService.getNextMusic(roomId);
         return musicDto != null ? ResponseEntity.ok(musicDto) : ResponseEntity.notFound().build();
     }
+    //TODO: 소켓으로 옮기기 테스팅용 코드
+    @GetMapping("/{roomId}/answer/{answer}")
+    public ResponseEntity<?> getAnswer(@PathVariable Long roomId, @PathVariable String answer) {
+        if(musicService.checkAnswer(roomId, answer)) {
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.badRequest().build();
+    }
 
 }
