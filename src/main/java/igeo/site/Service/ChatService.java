@@ -1,9 +1,8 @@
 package igeo.site.Service;
 
+import igeo.site.DTO.AnswerDto;
 import igeo.site.DTO.ChatDto;
-import igeo.site.DTO.MusicDto;
 import igeo.site.Game.MissionTracker;
-import igeo.site.Game.RoomTracker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +17,7 @@ public class ChatService {
         this.musicService = musicService;
     }
 
-    public ChatDto message(ChatDto chatDto,Long roomId) {
+    public Object message(ChatDto chatDto, Long roomId) {
         switch(chatDto.getType()) {
             case ENTER:
                 chatDto.setMessage(chatDto.getSender() + "님이 입장하셨습니다.");
@@ -26,9 +25,11 @@ public class ChatService {
             case TALK:
                 String msg = chatDto.getMessage();
                 if(missionTracker.checkAnswer(roomId, msg)){
-                    chatDto.setMessage(chatDto.getSender() + "님이 정답을 맞췄습니다"+ msg);
+                    AnswerDto currentAnswer = musicService.getCurrentAnswer(roomId);
+                    currentAnswer.setMessage(chatDto.getSender() + "님이 정답을 맞추셨습니다.");
+                    return currentAnswer;
                 }else{
-                    chatDto.setMessage(chatDto.getSender() + " : " + msg);
+                    chatDto.setMessage(msg);
                 }
                 break;
             case QUIT:

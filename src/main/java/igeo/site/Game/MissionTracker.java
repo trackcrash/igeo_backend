@@ -1,8 +1,10 @@
 package igeo.site.Game;
 
+import igeo.site.DTO.AnswerDto;
 import igeo.site.Model.Answer;
 import igeo.site.Model.Category;
 import igeo.site.Model.Music;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -12,10 +14,13 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Component
+@Slf4j
 public class MissionTracker {
     private Map<Long, Integer> currentMusicIndex = new ConcurrentHashMap<>();
     private Map<Long, List<Music>> musicLists = new ConcurrentHashMap<>();
     private Map<Long, Answer> answers = new ConcurrentHashMap<>();
+
+    private Map<Long, AnswerDto> answerDtos = new ConcurrentHashMap<>();
 
     //정답 생성
     public void createAnswer(Long roomId, String rawAnswer, String categoryData) {
@@ -29,7 +34,7 @@ public class MissionTracker {
     public boolean checkAnswer(Long roomId, String message) {
         Answer answer = getAnswer(roomId);
         if (answer == null) {
-            throw new RuntimeException("정답이 없습니다.");
+            return false;
         }
 
         for (Map.Entry<String, Category> entry : answer.getCategories().entrySet()) {
@@ -39,12 +44,14 @@ public class MissionTracker {
             for (Object possibleAnswer : new ArrayList<>(category.getPossibleAnswers())) {
                 if (possibleAnswer instanceof String) {
                     if (message.equals(possibleAnswer)) {
+                        addAnswerDto(roomId, message, entry.getKey());
                         category.clearPossibleAnswers();
                         return true;
                     }
                 } else if (possibleAnswer instanceof List) { // 정답이 2차원 리스트인 경우
                     List<String> answerGroup = (List<String>) possibleAnswer;
                     if (answerGroup.contains(message)) {
+                        addAnswerDto(roomId, message, entry.getKey());
                         category.removeAnswerGroup(answerGroup);
                         return true;
                     }
@@ -53,6 +60,25 @@ public class MissionTracker {
         }
         return false;
     }
+
+    public void addAnswerDto(Long roomId, String message, String categoryName) {
+        if(answerDtos.containsKey(roomId)) {
+            //기존 정답 삭제
+            answerDtos.remove(roomId);
+            //새로운 정답 추가
+            AnswerDto answerDto = new AnswerDto(categoryName, message, null);
+            answerDtos.put(roomId, answerDto);
+        } else {
+            AnswerDto answerDto = new AnswerDto(categoryName, message, null);
+            answerDtos.put(roomId, answerDto);
+        }
+    }
+
+    public AnswerDto getAnswerDto(Long roomId) {
+        return answerDtos.get(roomId);
+    }
+
+
 
     //정답 가져오기
     public Answer getAnswer(Long roomId) {

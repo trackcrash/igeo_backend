@@ -1,5 +1,6 @@
 package igeo.site.Service;
 
+import igeo.site.DTO.AnswerDto;
 import igeo.site.DTO.MusicDto;
 import igeo.site.Game.MissionTracker;
 import igeo.site.Model.Answer;
@@ -95,14 +96,18 @@ public class MusicService {
         return null;
     }
 
-    public Answer getCurrentAnswer(Long roomId) {
-        return tracker.getAnswer(roomId);
+    public AnswerDto getCurrentAnswer(Long roomId) {
+        return tracker.getAnswerDto(roomId);
     }
     // 다음 음악으로 넘어가기
     public MusicDto getNextMusic(Long roomId) {
         tracker.nextMusic(roomId);
         List<Music> missionList = tracker.getMusicList(roomId);
         int currentIndex = tracker.getCurrentMusicIndex(roomId);
+        Music currentMusic = missionList.get(currentIndex);
+        String rawAnswer = currentMusic.getAnswer();
+        String categoryData = currentMusic.getCategory();
+        tracker.createAnswer(roomId, rawAnswer, categoryData);
         if (currentIndex >= 0 && currentIndex < missionList.size()) {
             return transferMusicData(missionList, currentIndex);
         }

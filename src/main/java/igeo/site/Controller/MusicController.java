@@ -1,5 +1,6 @@
 package igeo.site.Controller;
 
+import igeo.site.DTO.AnswerDto;
 import igeo.site.DTO.MusicDto;
 import igeo.site.Service.MusicService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,16 +25,9 @@ public class MusicController {
     // 다음 음악으로 넘어가기
     @GetMapping("/{roomId}/next")
     public ResponseEntity<MusicDto> getNextMusic(@PathVariable Long roomId) {
+        //TODO: 권한 인증(방장만,스킵인원수가 차지않아도 넘어가지않게)
         MusicDto musicDto = musicService.getNextMusic(roomId);
         return musicDto != null ? ResponseEntity.ok(musicDto) : ResponseEntity.notFound().build();
-    }
-    //TODO: 소켓으로 옮기기 테스팅용 코드
-    @GetMapping("/{roomId}/answer/{answer}")
-    public ResponseEntity<?> getAnswer(@PathVariable Long roomId, @PathVariable String answer) {
-        if(musicService.checkAnswer(roomId, answer)) {
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.badRequest().build();
     }
 
 }
