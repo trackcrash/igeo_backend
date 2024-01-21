@@ -53,7 +53,10 @@
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
-
+     public User getCurrentUser(Authentication authentication) {
+         // 현재 사용자 정보 가져오기
+         return (User) authentication.getDetails();
+     }
      //로그인
      public ResponseEntity<String> Login(UserLoginDto userLoginDto ,AuthenticationManager authenticationManager) {
         //유저 정보 받기

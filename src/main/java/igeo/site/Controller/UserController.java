@@ -8,6 +8,7 @@
  import org.springframework.security.access.prepost.PreAuthorize;
  import org.springframework.security.authentication.AuthenticationManager;
  import org.springframework.security.authentication.BadCredentialsException;
+ import org.springframework.security.core.Authentication;
  import org.springframework.security.core.userdetails.UsernameNotFoundException;
  import org.springframework.validation.BindingResult;
  import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,8 @@
      @Autowired
      private AuthenticationManager authenticationManager;
 
+     @Autowired
+     private Authentication authentication;
      //로그인
      @PostMapping("/login")
      public ResponseEntity<?> handleLoginPostRequest(@Valid @RequestBody UserLoginDto userLoginDto, BindingResult bindingResult) {
