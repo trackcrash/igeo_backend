@@ -1,9 +1,11 @@
  package igeo.site.Controller;
 
+ import igeo.site.DTO.TokenRequestDto;
  import igeo.site.DTO.UserLoginDto;
  import lombok.RequiredArgsConstructor;
  import org.springframework.beans.factory.annotation.Autowired;
  import org.springframework.http.HttpStatus;
+ import org.springframework.http.RequestEntity;
  import org.springframework.http.ResponseEntity;
  import org.springframework.security.access.prepost.PreAuthorize;
  import org.springframework.security.authentication.AuthenticationManager;
@@ -27,8 +29,7 @@
      @Autowired
      private AuthenticationManager authenticationManager;
 
-     @Autowired
-     private Authentication authentication;
+
      //로그인
      @PostMapping("/login")
      public ResponseEntity<?> handleLoginPostRequest(@Valid @RequestBody UserLoginDto userLoginDto, BindingResult bindingResult) {
@@ -39,7 +40,7 @@
              return userService.Login(userLoginDto, authenticationManager); // JWT 토큰 반환
          }catch(UsernameNotFoundException e)
          {
-             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
          }
          catch (BadCredentialsException e) {
              return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid password.");
@@ -49,7 +50,17 @@
          }
      }
 
-
+    @PostMapping("/TokkenTest")
+    public ResponseEntity<?> tokenTest(@Valid @RequestBody TokenRequestDto tokenRequestDto)
+    {   try
+        {
+            return userService.handleClientRequest(tokenRequestDto.getToken(), tokenRequestDto.getEmail());
+        }
+        catch(UsernameNotFoundException e)
+        {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
+        }
+    }
 
      @PostMapping("/register")
      public ResponseEntity<?> register(@Valid @RequestBody CreateUserDto createUserDto, BindingResult bindingResult){

@@ -3,6 +3,7 @@
  import igeo.site.Config.SpringSecurityConfig;
  import igeo.site.DTO.CreateUserDto;
  import igeo.site.DTO.UserLoginDto;
+ import igeo.site.Provider.JwtTokenProvider;
  import io.jsonwebtoken.Jwts;
  import io.jsonwebtoken.SignatureAlgorithm;
  import lombok.Getter;
@@ -22,10 +23,12 @@
  import org.springframework.security.core.userdetails.UserDetailsService;
  import org.springframework.security.core.userdetails.UsernameNotFoundException;
  import org.springframework.security.crypto.password.PasswordEncoder;
+ import org.springframework.stereotype.Component;
  import org.springframework.stereotype.Service;
  import igeo.site.Model.User;
  import igeo.site.Repository.UserRepository;
 
+ import javax.validation.constraints.Email;
  import java.security.SecureRandom;
  import java.time.LocalDateTime;
  import java.util.Base64;
@@ -38,7 +41,8 @@
  @RequiredArgsConstructor
  @Service
  public class UserService implements UserDetailsService {
-
+     @Autowired
+     private JwtTokenProvider jwtTokenProvider;
      @Autowired
      private UserRepository userRepository;
 
@@ -59,12 +63,11 @@
      //로그인
      public ResponseEntity<String> Login(UserLoginDto userLoginDto ,AuthenticationManager authenticationManager) {
         //유저 정보 받기
-
          UserDetails userDetails = loadUserByUsername(userLoginDto.getEmail());
          Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, userLoginDto.getPassword(),userDetails.getAuthorities());
          authenticationManager.authenticate(authentication);
-         return ResponseEntity.ok(generateToken(authentication));
-
+         String generatedToken = jwtTokenProvider.generateToken(authentication);
+         return ResponseEntity.ok(generatedToken);
      }
 
     public User getUserByName(String name) {
@@ -120,17 +123,29 @@
                  Collections.singletonList(new SimpleGrantedAuthority("DEFAULT"))
                  );
      }
-     private String generateToken(Authentication authentication) {
-         return Jwts.builder()
-                 .setSubject(authentication.getName())
-                 .claim("Authorities", authentication.getAuthorities())
-                 .setIssuedAt(new Date())
-                 .setExpiration(new Date(System.currentTimeMillis() + 864000000)) // 토큰 만료 시간 설정
-                 .signWith(SignatureAlgorithm.HS256, "igeo".getBytes()) // 시크릿 키 설정
-                 .compact();
-     }
+
 
      public User getUserById(Long userId) {
             return userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+     }
+
+     // 클라이언트 요청에 대한 검증
+     public ResponseEntity<String> handleClientRequest(String token, String email) {
+         UserDetails userDetails = loadUserByUsername(email); // 여기서 실제 사용자 정보를 얻어오는 로직이 들어가야 합니다.
+         if (token == null || token.isEmpty()) {
+             // 토큰이 없는 경우 401 Unauthorized 반환
+             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token is required");
+         }
+
+         if (userDetails == null) {
+             // 사용자 정보를 찾을 수 없는 경우 401 Unauthorized 반환
+             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
+         }
+         if (jwtTokenProvider.validateToken(token, userDetails)) {
+             return ResponseEntity.ok("Valid Token");
+         } else {
+             // 토큰이 유효하지 않은 경우
+             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Token");
+         }
      }
  }
