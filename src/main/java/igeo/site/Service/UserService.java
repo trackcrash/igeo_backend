@@ -42,7 +42,6 @@
      @Autowired
      private UserRepository userRepository;
 
-
      @Autowired
      private PasswordEncoder passwordEncoder;
 
@@ -68,9 +67,11 @@
 
      }
 
+    public User getUserByName(String name) {
+        return userRepository.findByName(name);
+    }
 
-
- //유저 정보 조회
+    //유저 정보 조회
      public User getUserInfo(String Email) {
          return userRepository.findByEmail(Email);
      }
@@ -84,6 +85,16 @@
          userRepository.save(user1);
          return user1;
      }
+
+     //로그인된 유저 정보 조회
+     public User getLoginUserInfo() {
+         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+         if (authentication == null || authentication.getName().equals("anonymousUser")) {
+             throw new IllegalArgumentException("로그인이 필요합니다.");
+         }
+        String Email = authentication.getName();
+        return userRepository.findByEmail(Email);
+    }
 
      //유저 삭제
      public void deleteUser(String Email) {
@@ -119,4 +130,7 @@
                  .compact();
      }
 
+     public User getUserById(Long userId) {
+            return userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+     }
  }
