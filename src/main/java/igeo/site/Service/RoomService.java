@@ -24,7 +24,8 @@ public class RoomService {
 
     //방생성
     public Room createRoom(CreateRoomDto createRoomDto) {
-        User user = userService.getUserByName(createRoomDto.getSender());
+        String name = createRoomDto.getSender();
+        User user = userService.getUserByName(name);
         return roomTracker.createRoom(createRoomDto, user);
     }
     //방에 유저추가

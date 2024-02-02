@@ -1,24 +1,13 @@
  package igeo.site.Controller;
 
- import igeo.site.DTO.TokenRequestDto;
  import igeo.site.DTO.UserLoginDto;
- import io.swagger.v3.oas.annotations.Operation;
- import io.swagger.v3.oas.annotations.Parameter;
- import io.swagger.v3.oas.annotations.enums.ParameterIn;
+ import igeo.site.Model.User;
  import lombok.RequiredArgsConstructor;
- import org.springframework.beans.factory.annotation.Autowired;
  import org.springframework.http.HttpStatus;
- import org.springframework.http.RequestEntity;
  import org.springframework.http.ResponseEntity;
- import org.springframework.security.access.prepost.PreAuthorize;
  import org.springframework.security.authentication.AnonymousAuthenticationToken;
- import org.springframework.security.authentication.AuthenticationManager;
- import org.springframework.security.authentication.BadCredentialsException;
  import org.springframework.security.core.Authentication;
- import org.springframework.security.core.context.SecurityContext;
  import org.springframework.security.core.context.SecurityContextHolder;
- import org.springframework.security.core.userdetails.UserDetails;
- import org.springframework.security.core.userdetails.UsernameNotFoundException;
  import org.springframework.validation.BindingResult;
  import org.springframework.web.bind.annotation.*;
  import igeo.site.DTO.CreateUserDto;
@@ -31,37 +20,22 @@
  @RequestMapping("/user")
  public class UserController {
 
-     @Autowired
-     private UserService userService;
-     @Autowired
-     private AuthenticationManager authenticationManager;
+     private final UserService userService;
 
-
-     //로그인
+     // 로그인
      @PostMapping("/login")
      public ResponseEntity<?> handleLoginPostRequest(@Valid @RequestBody UserLoginDto userLoginDto, BindingResult bindingResult) {
-          if (bindingResult.hasErrors()) {
-             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid request.");
+         if (bindingResult.hasErrors()) {
+             return ResponseEntity.badRequest().body("Invalid request.");
          }
-         try {
-             return userService.login(userLoginDto, authenticationManager);
-         }catch(UsernameNotFoundException e)
-         {
-             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
-         }
-         catch (BadCredentialsException e) {
-             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid password.");
-         } catch (Exception e) {
-             System.out.println(e.getMessage());
-             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while processing your request.");
-         }
+         return userService.login(userLoginDto);
      }
 
+     // 인증 확인
      @GetMapping("/check_authentication")
      public ResponseEntity<String> checkAuthentication() {
          Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-         System.out.println("checkAuthentication"+authentication);
-         if (authentication != null && authentication.isAuthenticated()) {
+         if (authentication != null && !(authentication instanceof AnonymousAuthenticationToken) && authentication.isAuthenticated()) {
              // 현재 사용자가 인증되었음
              return ResponseEntity.ok("Authenticated user: " + authentication.getName());
          } else {
@@ -69,54 +43,34 @@
              return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
          }
      }
-//    @PostMapping("/TokenTest")
-//    public ResponseEntity<?> tokenTest(@Valid @RequestBody TokenRequestDto tokenRequestDto)
-//    {   try
-//        {
-//            return userService.handleClientRequest(tokenRequestDto.getToken(), tokenRequestDto.getEmail());
-//        }
-//        catch(UsernameNotFoundException e)
-//        {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
-//        }
-//    }
 
+     // 회원 가입
      @PostMapping("/register")
-     public ResponseEntity<?> register(@Valid @RequestBody CreateUserDto createUserDto, BindingResult bindingResult){
-         if(bindingResult.hasErrors()){
-             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid request.");
+     public ResponseEntity<?> register(@Valid @RequestBody CreateUserDto createUserDto, BindingResult bindingResult) {
+         if (bindingResult.hasErrors()) {
+             return ResponseEntity.badRequest().body("Invalid request.");
          }
-         try{
-             userService.save(createUserDto);
-             return ResponseEntity.ok().body("User registered successfully!");
-         }catch (Exception e){
-             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while processing your request.");
-         }
+         User user = userService.save(createUserDto);
+         return ResponseEntity.ok().body("User registered successfully with ID: " + user.getId());
      }
 
+     // 계정 삭제 확인 페이지
      @GetMapping("/delete_account_confirm")
-     public String  DeleteAccountConfirm()
-     {
-        return "user/DeleteAccountConfirm";
+     public ResponseEntity<?> deleteAccountConfirm() {
+         return ResponseEntity.ok().body("Please confirm your account deletion.");
      }
 
-     @GetMapping("/delete_account")
-     public String DeleteAccount()
-     {
+     // 계정 삭제
+     @DeleteMapping("/delete_account")
+     public ResponseEntity<?> deleteAccount() {
          Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-         System.out.println(authentication.getPrincipal());
          if (authentication != null && !(authentication instanceof AnonymousAuthenticationToken) && authentication.isAuthenticated()) {
-             UserDetails userDetails = userService.getCurrentUser(authentication);
-
-             if (userDetails != null) {
-                 return userDetails.getUsername();
-             } else {
-                 // 사용자 정보를 찾지 못한 경우에 대한 처리
-                 return "User details not found";
-             }
+             String email = authentication.getName();
+             String result = userService.deleteUserByUsername(email);
+             return ResponseEntity.ok().body(result);
          } else {
              // 인증되지 않은 경우에 대한 처리
-             return "User not authenticated";
+             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
          }
      }
  }
