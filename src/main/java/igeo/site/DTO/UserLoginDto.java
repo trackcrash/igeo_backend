@@ -1,9 +1,11 @@
 package igeo.site.DTO;
 
+import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 
 
-@Getter
+@Data
 public class UserLoginDto {
     private String email;
     private String password;
