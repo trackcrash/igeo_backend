@@ -18,6 +18,7 @@
  import org.springframework.security.core.AuthenticationException;
  import org.springframework.security.core.GrantedAuthority;
  import org.springframework.security.core.authority.SimpleGrantedAuthority;
+ import org.springframework.security.core.context.SecurityContext;
  import org.springframework.security.core.context.SecurityContextHolder;
  import org.springframework.security.core.userdetails.UserDetails;
  import org.springframework.security.core.userdetails.UserDetailsService;
@@ -53,21 +54,47 @@
      //저장
     public User save(CreateUserDto createUserDto){
         User user = User.createUser(createUserDto, passwordEncoder);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setPassword(user.getPassword());
         return userRepository.save(user);
     }
-     public User getCurrentUser(Authentication authentication) {
-         // 현재 사용자 정보 가져오기
-         return (User) authentication.getDetails();
+     public UserDetails getCurrentUser(Authentication authentication) {
+         Object userDetails = authentication.getDetails();
+
+         if (userDetails instanceof UserDetails) {
+             return (UserDetails) userDetails;
+         }
+         return null;
      }
      //로그인
-     public ResponseEntity<String> Login(UserLoginDto userLoginDto ,AuthenticationManager authenticationManager) {
-        //유저 정보 받기
-         UserDetails userDetails = loadUserByUsername(userLoginDto.getEmail());
-         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, userLoginDto.getPassword(),userDetails.getAuthorities());
-         authenticationManager.authenticate(authentication);
-         String generatedToken = jwtTokenProvider.generateToken(authentication);
-         return ResponseEntity.ok(generatedToken);
+     public ResponseEntity<String> login(UserLoginDto userLoginDto, AuthenticationManager authenticationManager) {
+         try {
+             // 유저 정보 받기
+             UserDetails userDetails = loadUserByUsername(userLoginDto.getEmail());
+             Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, userLoginDto.getPassword(), userDetails.getAuthorities());
+             // 사용자 인증 시도
+             Authentication authenticated = authenticationManager.authenticate(authentication);
+             // 성공하면 SecurityContextHolder에 인증 정보 설정
+             SecurityContextHolder.getContext().setAuthentication(authenticated);
+             System.out.println("login " + SecurityContextHolder.getContext().getAuthentication());
+             // JWT 토큰 생성 및 반환
+             String token = jwtTokenProvider.generateToken(authenticated);
+             return ResponseEntity.ok(SecurityContextHolder.getContext().getAuthentication().getName());
+         } catch (AuthenticationException e) {
+             // 인증 실패 시 처리
+             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed");
+         }
+     }
+     @Override
+     public UserDetails loadUserByUsername(String Email) throws UsernameNotFoundException {
+         User user = userRepository.findByEmail(Email);
+         if (user == null) {
+             throw new UsernameNotFoundException("Invalid username/password supplied");
+         }
+         return new org.springframework.security.core.userdetails.User(
+                 user.getEmail(),
+                 user.getPassword(),
+                 Collections.singletonList(new SimpleGrantedAuthority(user.getPermissions()))
+         );
      }
 
     public User getUserByName(String name) {
@@ -100,9 +127,19 @@
     }
 
      //유저 삭제
-     public void deleteUser(String Email) {
-         User user = userRepository.findByEmail(Email);
+     public String deleteUser(String tokenData) {
+        try
+        {
+            String email = jwtTokenProvider.extractUsername(tokenData);
+            User user = userRepository.findByEmail(email);
+            if(user == null) return "Not Found User";
             userRepository.delete(user);
+            return "Success";
+        }catch(Exception e)
+         {
+             e.printStackTrace();
+             return "failed";
+         }
      }
 
      //유저 리스트 조회
@@ -111,18 +148,6 @@
      }
 
      //유저 정보 조회
-     @Override
-     public UserDetails loadUserByUsername(String Email) throws UsernameNotFoundException {
-         User user = userRepository.findByEmail(Email);
-         if (user == null) {
-             throw new UsernameNotFoundException("Invalid username/password supplied");
-         }
-         return new org.springframework.security.core.userdetails.User(
-                 user.getEmail(),
-                 user.getPassword(),
-                 Collections.singletonList(new SimpleGrantedAuthority("DEFAULT"))
-                 );
-     }
 
 
      public User getUserById(Long userId) {
