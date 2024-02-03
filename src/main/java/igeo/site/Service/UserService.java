@@ -63,6 +63,7 @@
          } catch (AuthenticationException e) {
              return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed");
          }
+
      }
      // 로그인된 유저 정보 조회
      public User getLoginUserInfo() {

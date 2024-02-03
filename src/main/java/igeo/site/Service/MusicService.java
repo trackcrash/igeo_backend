@@ -14,17 +14,13 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class MusicService {
 
     private final MusicRepository musicRepository;
 
     //음악관리를 위한 tracker 사용
     private final MissionTracker tracker;
-    @Autowired
-    public MusicService(MissionTracker tracker, MusicRepository musicRepository) {
-        this.tracker = tracker;
-        this.musicRepository = musicRepository;
-    }
 
     //missionId로 음악 리스트 가져오기
     //결과값 : 음악 리스트

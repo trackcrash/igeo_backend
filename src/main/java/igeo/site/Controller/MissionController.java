@@ -2,16 +2,17 @@ package igeo.site.Controller;
 
 import igeo.site.DTO.MissionDto;
 import igeo.site.Service.MissionService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("api/mission")
 public class MissionController {
 
-    @Autowired
-    private MissionService missionService;
+    private final MissionService missionService;
 
     //Create
     @PostMapping("/save")
