@@ -15,14 +15,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MissionService {
 
-    @Autowired
     private MissionRepository missionRepository;
 
-    @Autowired
     private UserRepository userRepository;
 
     //음악 저장시 사용하기위해 서비스객체 주입
-    @Autowired
     private MusicService musicService;
 
     //미션 저장

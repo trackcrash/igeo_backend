@@ -4,17 +4,15 @@ import igeo.site.DTO.CreateRoomDto;
 import igeo.site.DTO.RoomDto;
 import igeo.site.Service.RoomService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 @RestController
+@RequiredArgsConstructor
 public class RoomController {
 
     private final RoomService roomService;
-    @Autowired
-    public RoomController(RoomService roomService) {
-        this.roomService = roomService;
-    }
 
     @PostMapping("/room_list/create")
     public ResponseEntity<?> createRoom(@Valid @RequestBody CreateRoomDto createRoomDto) {

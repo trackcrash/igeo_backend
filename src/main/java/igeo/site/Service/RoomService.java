@@ -5,22 +5,19 @@ import igeo.site.DTO.RoomDto;
 import igeo.site.Game.RoomTracker;
 import igeo.site.Model.Room;
 import igeo.site.Model.User;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class RoomService {
 
     private final UserService userService;
     private final RoomTracker roomTracker;
 
-    @Autowired
-    public RoomService(UserService userService, RoomTracker roomTracker) {
-        this.userService = userService;
-        this.roomTracker = roomTracker;
-    }
 
     //방생성
     public Room createRoom(CreateRoomDto createRoomDto) {
