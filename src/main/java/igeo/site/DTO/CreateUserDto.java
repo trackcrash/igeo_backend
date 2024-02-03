@@ -21,16 +21,11 @@
 
      @NotBlank(message = "이름을 입력해주세요")
      private String name;
-
-     @NotEmpty(message = "인증코드를 입력해주세요")
-     private String confirmCode;
-
      @Builder
-     public CreateUserDto(String Email, String Password, String Name, String confirmCode) {
+     public CreateUserDto(String Email, String Password, String Name) {
          this.email = Email;
          this.password = Password;
          this.name = Name;
-         this.confirmCode = confirmCode;
      }
 
  }

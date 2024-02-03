@@ -9,8 +9,8 @@
  import jakarta.persistence.*;
  import java.time.LocalDateTime;
 
- @NoArgsConstructor
  @Entity
+ @NoArgsConstructor
  @Getter
  @Setter
  @Table(name="UserTable")
@@ -24,14 +24,15 @@
      private int level;
      private int exp;
      private int nextExp;
+     @Column(name = "characterNum")
      private int character;
      private LocalDateTime last_login;
      private boolean is_google_authenticated;
-     private String permissions;
+     private int permissions;
      private String profile_background;
 
      @Builder
-     public User(Long id, String name, String password, String email, int level, int exp, int nextExp, int character, LocalDateTime last_login, boolean is_google_authenticated, String permissions, String profile_background) {
+     public User(Long id, String name, String password, String email, int level, int exp, int nextExp, int character, LocalDateTime last_login, boolean is_google_authenticated, int permissions, String profile_background) {
          this.id = id;
          this.name = name;
          this.password = password;
@@ -57,7 +58,23 @@
                  .character(0)
                  .last_login(LocalDateTime.now())
                  .is_google_authenticated(false)
-                 .permissions("0")
+                 .permissions(0)
+                 .profile_background("")
+                 .build();
+         return user;
+     }
+     public static User createGoogleUser(CreateUserDto createUserDto){
+         User user = User.builder()
+                 .name(createUserDto.getName())
+                 .password(createUserDto.getPassword())
+                 .email(createUserDto.getEmail())
+                 .level(0)
+                 .exp(0)
+                 .nextExp(10)
+                 .character(0)
+                 .last_login(LocalDateTime.now())
+                 .is_google_authenticated(true)
+                 .permissions(0)
                  .profile_background("")
                  .build();
          return user;

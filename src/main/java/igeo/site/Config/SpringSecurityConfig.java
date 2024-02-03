@@ -1,8 +1,10 @@
  package igeo.site.Config;
 
+ import igeo.site.Auth.CustomOAuth2UserService;
  import igeo.site.Auth.JwtRequestFilter;
  import igeo.site.Game.MissionTracker;
  import igeo.site.Game.RoomTracker;
+ import igeo.site.Handler.CustomLogoutSuccessHandler;
  import igeo.site.Provider.CustomAuthenticationProvider;
  import org.springframework.beans.factory.annotation.Autowired;
  import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -16,10 +18,15 @@
  import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
  import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
  import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+ import org.springframework.security.config.annotation.web.configurers.oauth2.client.OAuth2LoginConfigurer;
  import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
  import org.springframework.security.crypto.password.PasswordEncoder;
+ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+ import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+ import org.springframework.security.oauth2.core.user.OAuth2User;
  import org.springframework.security.web.SecurityFilterChain;
  import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+ import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
 
  @Configuration
@@ -30,6 +37,8 @@
     //JWT 필터 추가
      @Autowired
      private JwtRequestFilter jwtRequestFilter;
+     @Autowired
+     private CustomOAuth2UserService customOAuth2UserService;
 
      //캬루 수정
      //로그인 페이지 설정
@@ -44,14 +53,28 @@
                          /*.requestMatchers("/user/register", "/", "user/login","oauth2/**").permitAll()*/
                          .requestMatchers("/**").permitAll()
                          .anyRequest().authenticated())
-				.formLogin(formLogin -> formLogin
-						.loginPage("/login")
-						.defaultSuccessUrl("/home"))
+//				.formLogin(formLogin -> formLogin
+//						.loginPage("/login")
+//						.defaultSuccessUrl("/home"))
+                 .oauth2Login(oauth2Login->
+                         oauth2Login
+                                 .loginPage("/login/google")
+                                 .userInfoEndpoint(
+                                 userInfoEndpointConfig -> userInfoEndpointConfig
+                                         .userService(customOAuth2UserService)
+                                    )
+                                 )
                  .logout((logout) -> logout
-                         .logoutSuccessUrl("/login")
-                         .invalidateHttpSession(true)
+                                 .logoutUrl("/user/logout")
+                                 .logoutSuccessHandler(customLogoutSuccessHandler())
+                                 .invalidateHttpSession(true)
                  );
          return http.build();
+     }
+
+     @Bean
+     public LogoutSuccessHandler customLogoutSuccessHandler() {
+      return new CustomLogoutSuccessHandler();
      }
 
      @Bean
