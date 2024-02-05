@@ -8,6 +8,7 @@
  import org.springframework.core.io.ClassPathResource;
  import org.springframework.http.HttpStatus;
  import org.springframework.http.ResponseEntity;
+ import org.springframework.security.authentication.AnonymousAuthenticationToken;
  import org.springframework.security.authentication.AuthenticationManager;
  import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
  import org.springframework.security.core.Authentication;
@@ -16,6 +17,9 @@
  import org.springframework.security.core.userdetails.UserDetails;
  import org.springframework.security.core.userdetails.UsernameNotFoundException;
  import org.springframework.security.crypto.password.PasswordEncoder;
+ import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+ import org.springframework.security.oauth2.core.OAuth2AccessToken;
+ import org.springframework.security.oauth2.core.user.OAuth2User;
  import org.springframework.stereotype.Service;
  import igeo.site.Model.User;
  import igeo.site.Repository.UserRepository;
@@ -63,7 +67,6 @@
          } catch (AuthenticationException e) {
              return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed");
          }
-
      }
      // 로그인된 유저 정보 조회
      public User getLoginUserInfo() {
@@ -89,13 +92,20 @@
      }
 
      // 유저 삭제
-     public String deleteUserByUsername(String username) {
-         User user = userRepository.findByEmail(username);
-         if (user == null) {
-             return "Not Found  User";
+     public ResponseEntity<?> deleteUserByUsername() {
+         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+         if (authentication != null && !(authentication instanceof AnonymousAuthenticationToken) && authentication.isAuthenticated()) {
+             String email = authentication.getName();
+             User user = getUserByName(email);
+             if (user == null) {
+                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Not Found  User");
+             }
+             userRepository.delete(user);
+             return ResponseEntity.ok().body(user.getName());
+         } else {
+             // 인증되지 않은 경우에 대한 처리
+             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
          }
-         userRepository.delete(user);
-         return user.getName();
      }
 
      // 유저 리스트 조회
@@ -120,24 +130,36 @@
     @Transactional
     public ResponseEntity<?> updateProfile(UpdateProfileDto updateProfileDto)
     {
-        User user = getLoginUserInfo();
-        if(!passwordEncoder.matches(updateProfileDto.getPassword(),user.getPassword())) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Password");
-        if(!updateProfileDto.getNewNickName().isBlank())
-        {
-            for(User item : getUserList())
-            {
-
-                if(item != user && item.getName().equals(updateProfileDto.getNewNickName())) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미 존재하는 닉네임입니다.");
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null && !(authentication instanceof AnonymousAuthenticationToken) && authentication.isAuthenticated()) {
+                User user = getLoginUserInfo();
+                if(!passwordEncoder.matches(updateProfileDto.getPassword(),user.getPassword())) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Password");
+                if(!updateProfileDto.getNewNickName().isBlank())
+                {
+                    for(User item : getUserList())
+                    {
+                        if(item != user && item.getName().equals(updateProfileDto.getNewNickName())) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미 존재하는 닉네임입니다.");
+                    }
+                    user.setName(updateProfileDto.getNewNickName());
+                }
+                String EncodedNewPassword = passwordEncoder.encode(updateProfileDto.getNewPassword());
+                if(!updateProfileDto.getNewPassword().isBlank())
+                {
+                    user.setPassword(EncodedNewPassword);
+                }
+                userRepository.save(user);
+                return ResponseEntity.ok().body("Success");
+            } else {
+                // 인증되지 않은 경우에 대한 처리
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
             }
-            user.setName(updateProfileDto.getNewNickName());
         }
-        String EncodedNewPassword = passwordEncoder.encode(updateProfileDto.getNewPassword());
-        if(!updateProfileDto.getNewPassword().isBlank())
+        catch (UsernameNotFoundException e)
         {
-            user.setPassword(EncodedNewPassword);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
-        userRepository.save(user);
-        return ResponseEntity.ok().body("Success");
+
     }
 
  }

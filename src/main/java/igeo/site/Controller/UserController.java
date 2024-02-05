@@ -43,16 +43,11 @@
          }
          return userService.login(userLoginDto);
      }
-     @GetMapping("/login-success")
-     public ResponseEntity<?> loginSuccess(@AuthenticationPrincipal OAuth2User oauth2User, Model model) {
-         // 로그인 성공 후 처리
-         model.addAttribute("user", oauth2User);
-         return ResponseEntity.ok("Login Success");
-     }
      // 인증 확인
      @GetMapping("/check_authentication")
      public ResponseEntity<String> checkAuthentication() {
          Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+         System.out.println(authentication);
          if (authentication != null && !(authentication instanceof AnonymousAuthenticationToken) && authentication.isAuthenticated()) {
              // 현재 사용자가 인증되었음
              return ResponseEntity.ok("Authenticated user: " + authentication.getName());
@@ -69,7 +64,6 @@
          if (bindingResult.hasErrors()) {
              return ResponseEntity.badRequest().body("Invalid request.");
          }
-
          return userService.save(createUserDto);
      }
 
@@ -82,32 +76,12 @@
      // 계정 삭제
      @DeleteMapping("/delete_account")
      public ResponseEntity<?> deleteAccount() {
-         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-         if (authentication != null && !(authentication instanceof AnonymousAuthenticationToken) && authentication.isAuthenticated()) {
-             String email = authentication.getName();
-             String result = userService.deleteUserByUsername(email);
-             return ResponseEntity.ok().body(result);
-         } else {
-             // 인증되지 않은 경우에 대한 처리
-             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
-         }
+         return userService.deleteUserByUsername();
      }
      @PutMapping("/update_profile")
      public ResponseEntity<?> updateProfile(@RequestBody UpdateProfileDto updateProfileDto)
      {
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (authentication != null && !(authentication instanceof AnonymousAuthenticationToken) && authentication.isAuthenticated()) {
-                return userService.updateProfile(updateProfileDto);
-            } else {
-                // 인증되지 않은 경우에 대한 처리
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
-            }
-        }
-        catch (UsernameNotFoundException e)
-        {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        return userService.updateProfile(updateProfileDto);
      }
 
  }

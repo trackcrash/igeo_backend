@@ -19,14 +19,19 @@
  import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
  import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
  import org.springframework.security.config.annotation.web.configurers.oauth2.client.OAuth2LoginConfigurer;
+ import org.springframework.security.core.authority.SimpleGrantedAuthority;
  import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
  import org.springframework.security.crypto.password.PasswordEncoder;
+ import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
  import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
  import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
  import org.springframework.security.oauth2.core.user.OAuth2User;
  import org.springframework.security.web.SecurityFilterChain;
  import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
  import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+
+ import java.util.Collections;
 
 
  @Configuration
@@ -39,7 +44,6 @@
      private JwtRequestFilter jwtRequestFilter;
      @Autowired
      private CustomOAuth2UserService customOAuth2UserService;
-
      //캬루 수정
      //로그인 페이지 설정
      @Bean
@@ -59,6 +63,7 @@
                  .oauth2Login(oauth2Login->
                          oauth2Login
                                  .loginPage("/login/google")
+                                 .defaultSuccessUrl("/login-success")
                                  .userInfoEndpoint(
                                  userInfoEndpointConfig -> userInfoEndpointConfig
                                          .userService(customOAuth2UserService)
@@ -71,6 +76,7 @@
                  );
          return http.build();
      }
+
 
      @Bean
      public LogoutSuccessHandler customLogoutSuccessHandler() {

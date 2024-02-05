@@ -1,9 +1,9 @@
 package igeo.site.Auth;
 
 import igeo.site.DTO.CreateUserDto;
+import igeo.site.Model.CustumOAuth2User;
 import igeo.site.Model.User;
 import igeo.site.Repository.UserRepository;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -24,13 +24,17 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         OAuth2User oauth2User = super.loadUser(userRequest);
         // 회원 가입 여부 체크 및 처리
         processOAuth2User(oauth2User);
-        return oauth2User;
+        String registrationId = userRequest.getClientRegistration().getRegistrationId();
+        return new CustumOAuth2User(oauth2User,registrationId);
     }
 
     private void processOAuth2User(OAuth2User oauth2User) {
-        // 회원 가입 여부 체크
         String email = oauth2User.getAttribute("email");
+        System.out.println("Received email from OAuth2 provider: " + email);
+
         if (!userRepository.existsByEmail(email)) {
+            System.out.println("User does not exist, creating a new user...");
+
             // 회원 가입 로직
             CreateUserDto createUserDto  = new CreateUserDto();
             createUserDto.setEmail(oauth2User.getAttribute("email"));
@@ -39,6 +43,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             User newUser = User.createGoogleUser(createUserDto);
             // ... 기타 필요한 정보 설정
             userRepository.save(newUser);
+
+            System.out.println("New user created successfully.");
+        } else {
+            System.out.println("User already exists.");
         }
+
     }
 }
