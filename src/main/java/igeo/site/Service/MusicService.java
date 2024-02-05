@@ -32,6 +32,7 @@ public class MusicService {
     public MusicDto transferMusicData(List<Music> musicList, int index) {
         Music music = musicList.get(index);
         return MusicDto.builder()
+                .id(music.getId())
                 .title(music.getTitle())
                 .song(music.getSong())
                 .youtube_url(music.getYoutube_url())

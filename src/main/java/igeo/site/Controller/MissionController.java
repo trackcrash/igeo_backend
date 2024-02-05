@@ -34,4 +34,10 @@ public class MissionController {
         missionService.deleteMission(id);
         return ResponseEntity.ok().build();
     }
+
+    //Read
+    @GetMapping("/get/{id}")
+    public ResponseEntity<?> getMission(@PathVariable Long id) {
+        return ResponseEntity.ok(missionService.getMission(id));
+    }
 }

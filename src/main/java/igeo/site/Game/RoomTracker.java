@@ -38,6 +38,29 @@ public class RoomTracker {
         }
     }
 
+    //스킵투표
+    public boolean addSkipVote(String roomId, User user) {
+        Room room = rooms.get(roomId);
+        if(room != null) {
+            boolean isSkipped = room.addSkipVote(user.getId());
+            if(isSkipped) {
+                room.clearSkipVotes();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //방장 스킵
+    public boolean ownerSkipVote(String roomId, User user) {
+        if(rooms.containsKey(roomId)) {
+            return rooms.get(roomId).ownerSkipVote(user.getId());
+        } else {
+            return false;
+        }
+    }
+
+
     //퇴장
     public void leaveRoom(String roomId, User user) {
         rooms.get(roomId).removeUser(user.getId());
