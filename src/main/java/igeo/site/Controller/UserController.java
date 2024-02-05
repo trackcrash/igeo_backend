@@ -56,6 +56,16 @@
              return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
          }
      }
+    // 구글 인증 확인 - 캬루
+     //구글인증의경우 받아올때 OAuth2User로 받아옴
+     @GetMapping("/google_authentication_check")
+        public ResponseEntity<String> googleAuthenticationCheck(@AuthenticationPrincipal OAuth2User oauth2User) {
+            if (oauth2User != null) {
+                return ResponseEntity.ok("Authenticated user: " + oauth2User.getAttribute("email"));
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
+            }
+        }
 
      // 회원 가입
      @PostMapping("/register")
