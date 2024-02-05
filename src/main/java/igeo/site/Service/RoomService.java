@@ -35,6 +35,17 @@ public class RoomService {
             return false;
         }
     }
+    //스킵투표
+    public boolean addSkipVote(String roomId, String userName) {
+        User user = userService.getUserByName(userName);
+        return roomTracker.addSkipVote(roomId, user);
+    }
+
+    //방장스킵
+    public boolean ownerSkipVote(String roomId, String userName) {
+        User user = userService.getUserByName(userName);
+        return roomTracker.ownerSkipVote(roomId, user);
+    }
 
     //방제거
     public void deleteRoom(String roomId) {

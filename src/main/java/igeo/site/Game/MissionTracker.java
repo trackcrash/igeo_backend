@@ -4,6 +4,7 @@ import igeo.site.DTO.AnswerDto;
 import igeo.site.Model.Answer;
 import igeo.site.Model.Category;
 import igeo.site.Model.Music;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -15,12 +16,13 @@ import java.util.stream.Collectors;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class MissionTracker {
-    private Map<Long, Integer> currentMusicIndex = new ConcurrentHashMap<>();
-    private Map<Long, List<Music>> musicLists = new ConcurrentHashMap<>();
-    private Map<Long, Answer> answers = new ConcurrentHashMap<>();
+    private final Map<Long, Integer> currentMusicIndex = new ConcurrentHashMap<>();
+    private final Map<Long, List<Music>> musicLists = new ConcurrentHashMap<>();
+    private final Map<Long, Answer> answers = new ConcurrentHashMap<>();
 
-    private Map<Long, AnswerDto> answerDtos = new ConcurrentHashMap<>();
+    private final Map<Long, AnswerDto> answerDtos = new ConcurrentHashMap<>();
 
     //정답 생성
     public void createAnswer(Long roomId, String rawAnswer, String categoryData) {
@@ -60,6 +62,7 @@ public class MissionTracker {
         }
         return false;
     }
+
 
     public void addAnswerDto(Long roomId, String message, String categoryName) {
         if(answerDtos.containsKey(roomId)) {
