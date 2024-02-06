@@ -2,19 +2,18 @@ package igeo.site.Controller;
 
 import igeo.site.DTO.CreateRoomDto;
 import igeo.site.DTO.RoomDto;
+import igeo.site.DTO.SkipDto;
 import igeo.site.Service.RoomService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 @RestController
+@RequiredArgsConstructor
 public class RoomController {
 
     private final RoomService roomService;
-    @Autowired
-    public RoomController(RoomService roomService) {
-        this.roomService = roomService;
-    }
 
     @PostMapping("/room_list/create")
     public ResponseEntity<?> createRoom(@Valid @RequestBody CreateRoomDto createRoomDto) {
@@ -47,6 +46,26 @@ public class RoomController {
         }
 
     }
+
+    @PostMapping("/play/skip")
+    public ResponseEntity<?> addSkipVote(@Valid @RequestBody SkipDto skipDto) {
+        boolean result = roomService.addSkipVote(skipDto.getRoomId(), skipDto.getUserName());
+        if (result) {
+            return ResponseEntity.ok().body(true);
+        }else{
+            return ResponseEntity.ok().body(false);
+        }
+    }
+
+    @PostMapping("/play/owner_skip")
+    public ResponseEntity<?> ownerSkipVote(@Valid @RequestBody SkipDto skipDto) {
+        if (roomService.ownerSkipVote(skipDto.getRoomId(), skipDto.getUserName())) {
+            return ResponseEntity.ok().build();
+        }else {
+            throw new IllegalArgumentException("방장이 아닙니다");
+        }
+    }
+
 
 
 }

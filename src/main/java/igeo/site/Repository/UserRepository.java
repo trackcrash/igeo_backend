@@ -10,4 +10,6 @@
      User findByEmail(String email);
      User findByPassword(String password);
      User findByName(String name);
+
+     boolean existsByEmail(String email);
  }

@@ -5,26 +5,24 @@ import igeo.site.DTO.RoomDto;
 import igeo.site.Game.RoomTracker;
 import igeo.site.Model.Room;
 import igeo.site.Model.User;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class RoomService {
 
     private final UserService userService;
     private final RoomTracker roomTracker;
 
-    @Autowired
-    public RoomService(UserService userService, RoomTracker roomTracker) {
-        this.userService = userService;
-        this.roomTracker = roomTracker;
-    }
 
     //방생성
     public Room createRoom(CreateRoomDto createRoomDto) {
-        User user = userService.getUserByName(createRoomDto.getSender());
+        String name = createRoomDto.getSender();
+        User user = userService.getUserByName(name);
         return roomTracker.createRoom(createRoomDto, user);
     }
     //방에 유저추가
@@ -36,6 +34,17 @@ public class RoomService {
         } else {
             return false;
         }
+    }
+    //스킵투표
+    public boolean addSkipVote(String roomId, String userName) {
+        User user = userService.getUserByName(userName);
+        return roomTracker.addSkipVote(roomId, user);
+    }
+
+    //방장스킵
+    public boolean ownerSkipVote(String roomId, String userName) {
+        User user = userService.getUserByName(userName);
+        return roomTracker.ownerSkipVote(roomId, user);
     }
 
     //방제거

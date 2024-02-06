@@ -1,151 +1,165 @@
  package igeo.site.Service;
 
- import igeo.site.Config.SpringSecurityConfig;
  import igeo.site.DTO.CreateUserDto;
+ import igeo.site.DTO.UpdateProfileDto;
  import igeo.site.DTO.UserLoginDto;
  import igeo.site.Provider.JwtTokenProvider;
- import io.jsonwebtoken.Jwts;
- import io.jsonwebtoken.SignatureAlgorithm;
- import lombok.Getter;
- import lombok.RequiredArgsConstructor;
  import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.core.io.ClassPathResource;
  import org.springframework.http.HttpStatus;
  import org.springframework.http.ResponseEntity;
+ import org.springframework.security.authentication.AnonymousAuthenticationToken;
  import org.springframework.security.authentication.AuthenticationManager;
- import org.springframework.security.authentication.BadCredentialsException;
  import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
  import org.springframework.security.core.Authentication;
  import org.springframework.security.core.AuthenticationException;
- import org.springframework.security.core.GrantedAuthority;
- import org.springframework.security.core.authority.SimpleGrantedAuthority;
  import org.springframework.security.core.context.SecurityContextHolder;
  import org.springframework.security.core.userdetails.UserDetails;
- import org.springframework.security.core.userdetails.UserDetailsService;
  import org.springframework.security.core.userdetails.UsernameNotFoundException;
  import org.springframework.security.crypto.password.PasswordEncoder;
- import org.springframework.stereotype.Component;
+ import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+ import org.springframework.security.oauth2.core.OAuth2AccessToken;
+ import org.springframework.security.oauth2.core.user.OAuth2User;
  import org.springframework.stereotype.Service;
  import igeo.site.Model.User;
  import igeo.site.Repository.UserRepository;
+ import org.springframework.transaction.annotation.Transactional;
 
- import javax.validation.constraints.Email;
- import java.security.SecureRandom;
- import java.time.LocalDateTime;
- import java.util.Base64;
+ import java.io.IOException;
+ import java.nio.file.Files;
+ import java.nio.file.Paths;
  import java.util.Collections;
- import java.util.Date;
  import java.util.List;
- import java.util.stream.Collectors;
 
 
- @RequiredArgsConstructor
  @Service
- public class UserService implements UserDetailsService {
+ public class UserService {
+     private final JwtTokenProvider jwtTokenProvider;
+     private final UserRepository userRepository;
+     private final PasswordEncoder passwordEncoder;
+     private final AuthenticationManager authenticationManager;
+
+
      @Autowired
-     private JwtTokenProvider jwtTokenProvider;
-     @Autowired
-     private UserRepository userRepository;
-
-     @Autowired
-     private PasswordEncoder passwordEncoder;
-
-
-     //저장
-    public User save(CreateUserDto createUserDto){
-        User user = User.createUser(createUserDto, passwordEncoder);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
-    }
-     public User getCurrentUser(Authentication authentication) {
-         // 현재 사용자 정보 가져오기
-         return (User) authentication.getDetails();
-     }
-     //로그인
-     public ResponseEntity<String> Login(UserLoginDto userLoginDto ,AuthenticationManager authenticationManager) {
-        //유저 정보 받기
-         UserDetails userDetails = loadUserByUsername(userLoginDto.getEmail());
-         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, userLoginDto.getPassword(),userDetails.getAuthorities());
-         authenticationManager.authenticate(authentication);
-         String generatedToken = jwtTokenProvider.generateToken(authentication);
-         return ResponseEntity.ok(generatedToken);
+     public UserService(JwtTokenProvider jwtTokenProvider, UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
+         this.jwtTokenProvider = jwtTokenProvider;
+         this.userRepository = userRepository;
+         this.passwordEncoder = passwordEncoder;
+         this.authenticationManager = authenticationManager;
+         // 파일에서 금지어 목록을 읽어옵니다.
      }
 
-    public User getUserByName(String name) {
-        return userRepository.findByName(name);
-    }
+     // 사용자 저장
+     public ResponseEntity<?> save(CreateUserDto createUserDto){
 
-    //유저 정보 조회
-     public User getUserInfo(String Email) {
-         return userRepository.findByEmail(Email);
+         User user = User.createUser(createUserDto, passwordEncoder);
+         User SavedUser = userRepository.save(user);
+         return ResponseEntity.ok("User registered successfully with ID: " + SavedUser.getId());
      }
-
-     //유저 정보 수정
-     public User updateUserInfo(String Email, User user) {
-         User user1 = userRepository.findByEmail(Email);
-         user1.setPassword(passwordEncoder.encode(user.getPassword()));
-         user1.setName(user.getName());
-         user1.setProfile_background(user.getProfile_background());
-         userRepository.save(user1);
-         return user1;
+     // 로그인
+     public ResponseEntity<String> login(UserLoginDto userLoginDto) {
+         try {
+             Authentication authentication = authenticationManager.authenticate(
+                     new UsernamePasswordAuthenticationToken(userLoginDto.getEmail(), userLoginDto.getPassword()));
+             SecurityContextHolder.getContext().setAuthentication(authentication);
+             String token = jwtTokenProvider.generateToken(authentication);
+             return ResponseEntity.ok(token);
+         } catch (AuthenticationException e) {
+             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed");
+         }
      }
-
-     //로그인된 유저 정보 조회
+     // 로그인된 유저 정보 조회
      public User getLoginUserInfo() {
          Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-         if (authentication == null || authentication.getName().equals("anonymousUser")) {
+         if (authentication == null || "anonymousUser".equals(authentication.getPrincipal().toString())) {
              throw new IllegalArgumentException("로그인이 필요합니다.");
          }
-        String Email = authentication.getName();
-        return userRepository.findByEmail(Email);
-    }
-
-     //유저 삭제
-     public void deleteUser(String Email) {
-         User user = userRepository.findByEmail(Email);
-            userRepository.delete(user);
+         String email = authentication.getName();
+         User user = userRepository.findByEmail(email);
+         if (user == null) {
+             throw new UsernameNotFoundException("User not found with email: " + email);
+         }
+         return user;
      }
 
-     //유저 리스트 조회
+     // 유저 정보 조회
+     public User getUserInfo(String email) {
+         User user = userRepository.findByEmail(email);
+         if (user == null) {
+             throw new UsernameNotFoundException("User not found with email: " + email);
+         }
+         return user;
+     }
+
+     // 유저 삭제
+     public ResponseEntity<?> deleteUserByUsername() {
+         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+         if (authentication != null && !(authentication instanceof AnonymousAuthenticationToken) && authentication.isAuthenticated()) {
+             String email = authentication.getName();
+             User user = getUserByName(email);
+             if (user == null) {
+                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Not Found  User");
+             }
+             userRepository.delete(user);
+             return ResponseEntity.ok().body(user.getName());
+         } else {
+             // 인증되지 않은 경우에 대한 처리
+             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
+         }
+     }
+
+     // 유저 리스트 조회
      public List<User> getUserList() {
          return userRepository.findAll();
      }
 
-     //유저 정보 조회
-     @Override
-     public UserDetails loadUserByUsername(String Email) throws UsernameNotFoundException {
-         User user = userRepository.findByEmail(Email);
-         if (user == null) {
-             throw new UsernameNotFoundException("Invalid username/password supplied");
-         }
-         return new org.springframework.security.core.userdetails.User(
-                 user.getEmail(),
-                 user.getPassword(),
-                 Collections.singletonList(new SimpleGrantedAuthority("DEFAULT"))
-                 );
-     }
-
-
+     // 유저 정보 조회
      public User getUserById(Long userId) {
-            return userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+         User user = userRepository.findById(userId).orElse(null);
+         if (user == null) {
+             throw new IllegalArgumentException("User not found");
+         }
+         return user;
      }
 
-     // 클라이언트 요청에 대한 검증
-     public ResponseEntity<String> handleClientRequest(String token, String email) {
-         UserDetails userDetails = loadUserByUsername(email); // 여기서 실제 사용자 정보를 얻어오는 로직이 들어가야 합니다.
-         if (token == null || token.isEmpty()) {
-             // 토큰이 없는 경우 401 Unauthorized 반환
-             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token is required");
-         }
+    //유저 이름으로 유저 조회
+    public User getUserByName(String name) {
+        return userRepository.findByName(name);
+    }
 
-         if (userDetails == null) {
-             // 사용자 정보를 찾을 수 없는 경우 401 Unauthorized 반환
-             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
-         }
-         if (jwtTokenProvider.validateToken(token, userDetails)) {
-             return ResponseEntity.ok("Valid Token");
-         } else {
-             // 토큰이 유효하지 않은 경우
-             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Token");
-         }
-     }
+    @Transactional
+    public ResponseEntity<?> updateProfile(UpdateProfileDto updateProfileDto)
+    {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null && !(authentication instanceof AnonymousAuthenticationToken) && authentication.isAuthenticated()) {
+                User user = getLoginUserInfo();
+                if(!passwordEncoder.matches(updateProfileDto.getPassword(),user.getPassword())) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Password");
+                if(!updateProfileDto.getNewNickName().isBlank())
+                {
+                    for(User item : getUserList())
+                    {
+                        if(item != user && item.getName().equals(updateProfileDto.getNewNickName())) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미 존재하는 닉네임입니다.");
+                    }
+                    user.setName(updateProfileDto.getNewNickName());
+                }
+                String EncodedNewPassword = passwordEncoder.encode(updateProfileDto.getNewPassword());
+                if(!updateProfileDto.getNewPassword().isBlank())
+                {
+                    user.setPassword(EncodedNewPassword);
+                }
+                userRepository.save(user);
+                return ResponseEntity.ok().body("Success");
+            } else {
+                // 인증되지 않은 경우에 대한 처리
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
+            }
+        }
+        catch (UsernameNotFoundException e)
+        {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+
+    }
+
  }

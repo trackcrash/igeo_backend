@@ -22,7 +22,6 @@ public class JwtTokenProvider {
     {
         Claims claims = Jwts.claims().setSubject(authentication.getName());
         claims.put("authorities", authentication.getAuthorities());
-        System.out.println(authentication.getName());
         Date now = new Date();
         Date expirationTime = new Date(now.getTime() + expiration); // 토큰 만료 시간 설정
         return Jwts.builder()
@@ -58,5 +57,4 @@ public class JwtTokenProvider {
     private Claims extractAllClaims(String token) {
         return Jwts.parser().setSigningKey(secretKey.getBytes()).parseClaimsJws(token).getBody();
     }
-
 }

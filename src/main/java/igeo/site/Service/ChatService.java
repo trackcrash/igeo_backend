@@ -3,19 +3,16 @@ package igeo.site.Service;
 import igeo.site.DTO.AnswerDto;
 import igeo.site.DTO.ChatDto;
 import igeo.site.Game.MissionTracker;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class ChatService {
+
     private final MissionTracker missionTracker;
     private final MusicService musicService;
-
-    @Autowired
-    public ChatService(MusicService musicService, MissionTracker missionTracker) {
-        this.missionTracker = missionTracker;
-        this.musicService = musicService;
-    }
 
     public Object message(ChatDto chatDto, Long roomId) {
         switch(chatDto.getType()) {

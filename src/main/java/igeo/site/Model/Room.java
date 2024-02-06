@@ -15,6 +15,7 @@ public class Room {
     private String password;
     private int maxUsers;
     private Set<Long> currentUsers = ConcurrentHashMap.newKeySet();
+    private Set<Long> skipVotes = ConcurrentHashMap.newKeySet();
 
     public Room(CreateRoomDto createRoomDto, String roomId) {
         this.type = createRoomDto.getType();
@@ -24,13 +25,39 @@ public class Room {
         this.password = createRoomDto.getPassword();
         this.maxUsers = createRoomDto.getMaxUser();
     }
-
+    //방에 유저 추가
     public void addUser(Long userId) {
         if (currentUsers.size() < maxUsers && !currentUsers.contains(userId)){
             currentUsers.add(userId);
         }else{
             throw new IllegalStateException("방이 가득찼습니다");
         }
+    }
+    //스킵투표
+    public boolean addSkipVote(Long userId) {
+        // 이미 투표했는지 검사
+        if (!skipVotes.contains(userId) && currentUsers.contains(userId)) {
+            skipVotes.add(userId);
+            int RequireSkipVote = skipVoteCount(currentUsers.size());
+            return skipVotes.size() > RequireSkipVote;
+        }
+        return false;
+    }
+    //스킵 갯수 설정
+    public int skipVoteCount(int count){
+        if(count <= 2){
+            return count;
+        }else{
+            return count-1;
+        }
+    }
+    //스킵투표 초기화
+    public void clearSkipVotes() {
+        skipVotes.clear();
+    }
+    //방장 스킵
+    public boolean ownerSkipVote(Long userId){
+        return userId.toString().equals(owner);
     }
 
     public int getCurrentUsers() {

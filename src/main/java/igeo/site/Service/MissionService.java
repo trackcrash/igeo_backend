@@ -1,29 +1,29 @@
 package igeo.site.Service;
 
 import igeo.site.DTO.MissionDto;
+import igeo.site.DTO.MusicDto;
 import igeo.site.Model.Mission;
 
+import igeo.site.Model.Music;
 import igeo.site.Repository.MissionRepository;
 import igeo.site.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class MissionService {
 
-    @Autowired
-    private MissionRepository missionRepository;
+    private final MissionRepository missionRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     //음악 저장시 사용하기위해 서비스객체 주입
-    @Autowired
-    private MusicService musicService;
+    private final MusicService musicService;
 
     //미션 저장
     //클라이언트에서 받은 정보를 미션객체로 만들어서 저장후 음악저장
@@ -93,9 +93,33 @@ public class MissionService {
         missionRepository.delete(mission);
     }
 
-    //미션 조회
-    public List<Mission> getMission(){
+    //전체 조회
+    public List<Mission> getAllMission(){
         List<Mission> missions = missionRepository.findAll();
         return missions;
     }
+
+    //미션 조회
+    public MissionDto getMission(Long missionId) {
+        Mission mission = missionRepository.findById(missionId).
+                orElseThrow(() -> new IllegalStateException("존재하지 않는 미션입니다."));
+        List<Music> musics = new ArrayList<>();
+        musics = musicService.getMusicByMission(missionId);
+        List<MusicDto> musicDtos = new ArrayList<>();
+        for(int i = 0; i < musics.size(); i++) {
+            musicDtos.add(musicService.transferMusicData(musics, i));
+        }
+        return MissionDto.builder()
+                .id(mission.getId())
+                .MapName(mission.getMapName())
+                .MapProducer(mission.getMapProducer())
+                .Thumbnail(mission.getThumbnail())
+                .active(mission.isActive())
+                .PlayNum(mission.getPlayNum())
+                .Description(mission.getDescription())
+                .user_id(mission.getUser().getId())
+                .musics(musicDtos)
+                .build();
+    }
+
 }

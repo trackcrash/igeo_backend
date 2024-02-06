@@ -3,16 +3,17 @@ package igeo.site.Controller;
 import igeo.site.DTO.AnswerDto;
 import igeo.site.DTO.MusicDto;
 import igeo.site.Service.MusicService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("api/music")
 public class MusicController {
 
-    @Autowired
-    private MusicService musicService;
+    private final MusicService musicService;
 
     //게임 시작시 음악 리스트 가져오기
     //결과값 : 첫번 째 음악
