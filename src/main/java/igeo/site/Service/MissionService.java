@@ -38,6 +38,7 @@ public class MissionService {
                 .PlayNum(0)
                 .Description(missionDto.getDescription())
                 .user(userRepository.findById(missionDto.getUser_id()).orElse(null))
+                .numberOfQuestion(missionDto.getMusics().size())
                 .build();
         missionRepository.save(mission);
 
@@ -70,6 +71,7 @@ public class MissionService {
         mission.setThumbnail(missionDto.getThumbnail());
         mission.setDescription(missionDto.getDescription());
         mission.setUser(userRepository.findById(missionDto.getUser_id()).orElse(null));
+        mission.setNumberOfQuestion(missionDto.getMusics().size());
         missionRepository.save(mission);
 
         for(int i = 0; i < missionDto.getMusics().size(); i++) {
@@ -118,6 +120,7 @@ public class MissionService {
                 .Description(mission.getDescription())
                 .user_id(mission.getUser().getId())
                 .musics(musicDtos)
+                .numberOfQuestion(mission.getNumberOfQuestion())
                 .build();
     }
 
