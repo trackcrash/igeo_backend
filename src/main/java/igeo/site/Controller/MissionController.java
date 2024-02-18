@@ -46,7 +46,7 @@ public class MissionController {
     //OWNED MAPS
     @GetMapping("/owned/{id}")
     public ResponseEntity<?> getOwnedMaps(@PathVariable Long id) {
-        List<MissionDto> ownedMissions = missionService.getOwnedMaps(id);
-        return ResponseEntity.ok().body(ownedMissions);
+        //List<MissionDto> ownedMissions = missionService.getOwnedMaps(id);
+        return ResponseEntity.ok().body(missionService.getOwnedMaps(id));
     }
 }

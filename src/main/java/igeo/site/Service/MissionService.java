@@ -121,14 +121,23 @@ public class MissionService {
                 .build();
     }
 
-    //유저가 소유한 미션 조회
-    public List<MissionDto> getOwnedMaps(Long userId) {
+//    //유저가 소유한 미션 조회
+//    public List<MissionDto> getOwnedMaps(Long userId) {
+//        List<Mission> missions = missionRepository.findByUserId(userId);
+//        List<MissionDto> missionDtos = new ArrayList<>();
+//        for (Mission mission : missions) {
+//            missionDtos.add(getMission(mission.getId()));
+//        }
+//        return missionDtos;
+//    }
+
+    public List<Mission> getOwnedMaps(Long userId) {
         List<Mission> missions = missionRepository.findByUserId(userId);
-        List<MissionDto> missionDtos = new ArrayList<>();
+        //user는 제외
         for (Mission mission : missions) {
-            missionDtos.add(getMission(mission.getId()));
+            mission.setUser(null);
         }
-        return missionDtos;
+        return missions;
     }
 
 }
