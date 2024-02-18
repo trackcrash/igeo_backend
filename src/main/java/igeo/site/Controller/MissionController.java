@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/mission")
@@ -39,5 +41,12 @@ public class MissionController {
     @GetMapping("/get/{id}")
     public ResponseEntity<?> getMission(@PathVariable Long id) {
         return ResponseEntity.ok(missionService.getMission(id));
+    }
+
+    //OWNED MAPS
+    @GetMapping("/owned/{id}")
+    public ResponseEntity<?> getOwnedMaps(@PathVariable Long id) {
+        List<MissionDto> ownedMissions = missionService.getOwnedMaps(id);
+        return ResponseEntity.ok().body(ownedMissions);
     }
 }

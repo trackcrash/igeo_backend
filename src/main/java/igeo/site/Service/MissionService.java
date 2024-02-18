@@ -95,8 +95,7 @@ public class MissionService {
 
     //전체 조회
     public List<Mission> getAllMission(){
-        List<Mission> missions = missionRepository.findAll();
-        return missions;
+        return missionRepository.findAll();
     }
 
     //미션 조회
@@ -120,6 +119,16 @@ public class MissionService {
                 .user_id(mission.getUser().getId())
                 .musics(musicDtos)
                 .build();
+    }
+
+    //유저가 소유한 미션 조회
+    public List<MissionDto> getOwnedMaps(Long userId) {
+        List<Mission> missions = missionRepository.findByUserId(userId);
+        List<MissionDto> missionDtos = new ArrayList<>();
+        for (Mission mission : missions) {
+            missionDtos.add(getMission(mission.getId()));
+        }
+        return missionDtos;
     }
 
 }
