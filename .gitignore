@@ -34,4 +34,5 @@ build/
 .vscode/
 
 /src/main/resources/application-igeo.properties
+/src/main/resources/application-igeo-development.properties
 src/main/resources/application-test.properties
