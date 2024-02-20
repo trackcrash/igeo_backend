@@ -16,6 +16,7 @@ public class Room {
     private int maxUsers;
     private Set<Long> currentUsers = ConcurrentHashMap.newKeySet();
     private Set<Long> skipVotes = ConcurrentHashMap.newKeySet();
+    private Long MissionId;
 
     public Room(CreateRoomDto createRoomDto, String roomId) {
         this.type = createRoomDto.getType();
@@ -24,6 +25,7 @@ public class Room {
         this.owner = createRoomDto.getSender();
         this.password = createRoomDto.getPassword();
         this.maxUsers = createRoomDto.getMaxUser();
+        this.MissionId = null;
     }
     //방에 유저 추가
     public void addUser(Long userId) {
@@ -74,5 +76,9 @@ public class Room {
 
     public boolean isFull() {
         return currentUsers.size() == maxUsers;
+    }
+
+    public Long getCurrentUsersCount() {
+        return (long) currentUsers.size();
     }
 }

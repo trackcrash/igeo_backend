@@ -22,12 +22,14 @@ public class Mission {
     private int PlayNum;
     private String Description;
     private int numberOfQuestion;
+    private String mapType;
+
     @ManyToOne
     @JoinColumn(name = "MapProducer_id", referencedColumnName = "id")
     private User user;
 
     @Builder
-    public Mission(Long id, String MapName, String MapProducer, String Thumbnail, boolean active, int PlayNum, String Description, User user, int numberOfQuestion) {
+    public Mission(Long id, String MapName, String MapProducer, String Thumbnail, boolean active, int PlayNum, String Description, User user, int numberOfQuestion, String mapType) {
         this.id = id;
         this.MapName = MapName;
         this.MapProducer = MapProducer;
@@ -37,9 +39,10 @@ public class Mission {
         this.Description = Description;
         this.user = user;
         this.numberOfQuestion = numberOfQuestion;
+        this.mapType = mapType;
     }
 
-    public static Mission createMission(String MapName, String MapProducer, String Thumbnail, boolean active, int PlayNum, String Description, User user, int numberOfQuestion) {
+    public static Mission createMission(String MapName, String MapProducer, String Thumbnail, boolean active, int PlayNum, String Description, User user, int numberOfQuestion, String mapType) {
         Mission mission = Mission.builder()
                 .MapName(MapName)
                 .MapProducer(MapProducer)
@@ -49,6 +52,7 @@ public class Mission {
                 .Description(Description)
                 .user(user)
                 .numberOfQuestion(numberOfQuestion)
+                .mapType(mapType)
                 .build();
         return mission;
     }

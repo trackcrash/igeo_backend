@@ -66,6 +66,10 @@ public class RoomController {
         }
     }
 
-
+    @PostMapping("/play/{roomId}/{missionId}")
+    public ResponseEntity<?> setMission(@PathVariable String roomId, @PathVariable Long missionId) {
+        roomService.selectMission(roomId, missionId);
+        return ResponseEntity.ok().build();
+    }
 
 }

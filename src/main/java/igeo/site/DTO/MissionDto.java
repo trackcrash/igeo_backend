@@ -20,9 +20,10 @@ public class MissionDto implements Serializable {
     private Long user_id;
     private List<MusicDto> musics;
     private int numberOfQuestion;
+    private String mapType;
 
     @Builder
-    public MissionDto(Long id, String MapName, String MapProducer, String Thumbnail, boolean active, int PlayNum, String Description, Long user_id, List<MusicDto> musics, int numberOfQuestion) {
+    public MissionDto(Long id, String MapName, String MapProducer, String Thumbnail, boolean active, int PlayNum, String Description, Long user_id, List<MusicDto> musics, int numberOfQuestion, String mapType) {
         this.id = id;
         this.MapName = MapName;
         this.MapProducer = MapProducer;
@@ -33,5 +34,6 @@ public class MissionDto implements Serializable {
         this.user_id = user_id;
         this.musics = musics;
         this.numberOfQuestion = numberOfQuestion;
+        this.mapType = mapType;
     }
 }

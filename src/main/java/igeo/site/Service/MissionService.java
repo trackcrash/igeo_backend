@@ -39,6 +39,7 @@ public class MissionService {
                 .Description(missionDto.getDescription())
                 .user(userRepository.findById(missionDto.getUser_id()).orElse(null))
                 .numberOfQuestion(missionDto.getMusics().size())
+                .mapType(missionDto.getMapType())
                 .build();
         missionRepository.save(mission);
 
@@ -141,6 +142,12 @@ public class MissionService {
             mission.setUser(null);
         }
         return missions;
+    }
+
+    //미션 아이디로 미션 조회
+    public Mission getMissionById(Long missionId) {
+        return missionRepository.findById(missionId)
+                .orElseThrow(() -> new IllegalStateException("존재하지 않는 미션입니다."));
     }
 
 }

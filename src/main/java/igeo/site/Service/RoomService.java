@@ -2,13 +2,16 @@ package igeo.site.Service;
 
 import igeo.site.DTO.CreateRoomDto;
 import igeo.site.DTO.RoomDto;
+import igeo.site.DTO.RoomListDto;
 import igeo.site.Game.RoomTracker;
+import igeo.site.Model.Mission;
 import igeo.site.Model.Room;
 import igeo.site.Model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -17,6 +20,7 @@ public class RoomService {
 
     private final UserService userService;
     private final RoomTracker roomTracker;
+    private final MissionService missionService;
 
 
     //방생성
@@ -52,8 +56,28 @@ public class RoomService {
         roomTracker.deleteRoom(roomId);
     }
     //방리스트
-    public List<Room> getRooms() {
-        return roomTracker.getRooms();
+    public List<RoomListDto> getRooms() {
+        List<Room> rooms = roomTracker.getRooms();
+        List<RoomListDto> roomListDtos = new ArrayList<>();
+        for(Room room : rooms){
+            RoomListDto temp = new RoomListDto();
+            temp.setRoomId(room.getRoomId());
+            temp.setType(room.getType());
+            temp.setRoomName(room.getRoomName());
+            temp.setOwner(room.getOwner());
+            temp.setMaxUsers(room.getMaxUsers());
+            temp.setCurrentUsers(room.getCurrentUsersCount());
+            if(room.getMissionId()!=null){
+                Mission mission = missionService.getMissionById(room.getMissionId());
+                temp.setMapType(mission.getMapType());
+                temp.setThumbnail(mission.getThumbnail());
+            }else{
+                temp.setMapType(null);
+                temp.setThumbnail(null);
+            }
+            roomListDtos.add(temp);
+        }
+        return roomListDtos;
     }
     //퇴장
     public void leaveRoom(String roomId, String userName) {
@@ -64,4 +88,8 @@ public class RoomService {
         }
     }
 
+    //미션 선택
+    public void selectMission(String roomId, Long missionId) {
+        roomTracker.selectMission(roomId, missionId);
+    }
 }

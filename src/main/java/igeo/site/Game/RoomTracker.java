@@ -79,4 +79,9 @@ public class RoomTracker {
     public List<Room> getRooms() {
         return rooms.values().stream().toList();
     }
+
+    //미션 선택
+    public void selectMission(String roomId, Long missionId) {
+        rooms.get(roomId).setMissionId(missionId);
+    }
 }
