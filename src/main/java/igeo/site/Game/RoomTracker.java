@@ -82,6 +82,8 @@ public class RoomTracker {
 
     //미션 선택
     public void selectMission(String roomId, Long missionId) {
-        rooms.get(roomId).setMissionId(missionId);
+        Room room = rooms.get(roomId);
+        room.setMissionId(missionId);
+        rooms.put(roomId, room);
     }
 }
