@@ -76,6 +76,7 @@
                      .Token(token)
                      .Level(user.getLevel())
                      .Nickname(user.getName())
+                     .Character(user.getCharacter())
                      .build();
              return ResponseEntity.ok(loginResponseDto);
          } catch (AuthenticationException e) {
@@ -95,7 +96,7 @@
 
              // 로그인 응답 데이터 준비
              String redirectUrl = "http://localhost:3000/login-success"; // 클라이언트 측 URL
-             redirectUrl += "?token=" + jwtToken + "&level=" + user.getLevel() + "&nickname=" + URLEncoder.encode(user.getName(), "UTF-8");
+             redirectUrl += "?token=" + jwtToken + "&level=" + user.getLevel() + "&nickname=" + URLEncoder.encode(user.getName(), "UTF-8")+"&Character=" + user.getCharacter();
 
              // 클라이언트로 리다이렉트
              return new RedirectView(redirectUrl);
