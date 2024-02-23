@@ -1,6 +1,8 @@
 package igeo.site.Controller;
 
+import igeo.site.DTO.LoginResponseDto;
 import igeo.site.Model.CustumOAuth2User;
+import igeo.site.Model.User;
 import igeo.site.Provider.JwtTokenProvider;
 import igeo.site.Service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -33,14 +35,17 @@ public class GoogleLoginController {
         // OAuth2 로그인이 성공한 경우
         if ("google".equals(registrationId)) {
             String email = oauth2User.getAttribute("email");
-
-            // 여기에서 추가적인 로직 수행 가능
-
             // JWT 토큰 생성
             Authentication googleAuthentication = new UsernamePasswordAuthenticationToken(email, null);
             String jwtToken = jwtTokenProvider.generateToken(googleAuthentication);
-            System.out.println(jwtToken);
-            return ResponseEntity.ok(jwtToken);
+            User user = userService.getUserInfo(email);
+
+            LoginResponseDto loginResponseDto = LoginResponseDto.builder()
+                    .Token(jwtToken)
+                    .Level(user.getLevel())
+                    .Nickname(user.getName())
+                    .build();
+            return ResponseEntity.ok(loginResponseDto);
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 접근입니다.");
     }

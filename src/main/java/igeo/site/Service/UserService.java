@@ -1,6 +1,7 @@
  package igeo.site.Service;
 
  import igeo.site.DTO.CreateUserDto;
+ import igeo.site.DTO.LoginResponseDto;
  import igeo.site.DTO.UpdateProfileDto;
  import igeo.site.DTO.UserLoginDto;
  import igeo.site.Provider.JwtTokenProvider;
@@ -56,13 +57,19 @@
          return ResponseEntity.ok("User registered successfully with ID: " + SavedUser.getId());
      }
      // 로그인
-     public ResponseEntity<String> login(UserLoginDto userLoginDto) {
+     public ResponseEntity<?> login(UserLoginDto userLoginDto) {
          try {
              Authentication authentication = authenticationManager.authenticate(
                      new UsernamePasswordAuthenticationToken(userLoginDto.getEmail(), userLoginDto.getPassword()));
              SecurityContextHolder.getContext().setAuthentication(authentication);
              String token = jwtTokenProvider.generateToken(authentication);
-             return ResponseEntity.ok(token);
+             User user = getUserInfo(userLoginDto.getEmail());
+             LoginResponseDto loginResponseDto = LoginResponseDto.builder()
+                     .Token(token)
+                     .Level(user.getLevel())
+                     .Nickname(user.getName())
+                     .build();
+             return ResponseEntity.ok(loginResponseDto);
          } catch (AuthenticationException e) {
              return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed");
          }
