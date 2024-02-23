@@ -39,9 +39,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             CreateUserDto createUserDto  = new CreateUserDto();
             createUserDto.setEmail(oauth2User.getAttribute("email"));
             createUserDto.setName(oauth2User.getAttribute("name"));
-            createUserDto.setPassword(null);
+            createUserDto.setPassword("N/A");
             User newUser = User.createGoogleUser(createUserDto);
-            // ... 기타 필요한 정보 설정
             userRepository.save(newUser);
 
             System.out.println("New user created successfully.");

@@ -1,7 +1,9 @@
 package igeo.site.Controller;
 
 import igeo.site.DTO.MissionDto;
+import igeo.site.Model.User;
 import igeo.site.Service.MissionService;
+import igeo.site.Service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,7 @@ import java.util.List;
 public class MissionController {
 
     private final MissionService missionService;
+    private final UserService userService;
 
     //Create
     @PostMapping("/save")
@@ -44,9 +47,9 @@ public class MissionController {
     }
 
     //OWNED MAPS
-    @GetMapping("/owned/{id}")
-    public ResponseEntity<?> getOwnedMaps(@PathVariable Long id) {
-        //List<MissionDto> ownedMissions = missionService.getOwnedMaps(id);
-        return ResponseEntity.ok().body(missionService.getOwnedMaps(id));
+    @GetMapping("/owned")
+    public ResponseEntity<?> getOwnedMaps() {
+        User user = userService.getAuthenticatedUserInfo();
+        return ResponseEntity.ok().body(missionService.getOwnedMaps(user.getId()));
     }
 }
