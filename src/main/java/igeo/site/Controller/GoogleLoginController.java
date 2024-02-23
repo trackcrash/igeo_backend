@@ -30,24 +30,7 @@ public class GoogleLoginController {
     }
     @GetMapping("/login-success")
     public ResponseEntity<?> loginSuccess(@AuthenticationPrincipal CustumOAuth2User oauth2User, Model model) {
-        // 로그인 성공 후 처리
-        String registrationId = oauth2User.getRegistrationId();
-        // OAuth2 로그인이 성공한 경우
-        if ("google".equals(registrationId)) {
-            String email = oauth2User.getAttribute("email");
-            // JWT 토큰 생성
-            Authentication googleAuthentication = new UsernamePasswordAuthenticationToken(email, null);
-            String jwtToken = jwtTokenProvider.generateToken(googleAuthentication);
-            User user = userService.getUserInfo(email);
-
-            LoginResponseDto loginResponseDto = LoginResponseDto.builder()
-                    .Token(jwtToken)
-                    .Level(user.getLevel())
-                    .Nickname(user.getName())
-                    .build();
-            return ResponseEntity.ok(loginResponseDto);
-        }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 접근입니다.");
+        return userService.GoogleLogin(oauth2User, model);
     }
 //    @GetMapping("/login/oauth2/code/google")
 //    public String googleCallback(@AuthenticationPrincipal OAuth2User oauth2User,
