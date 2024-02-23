@@ -30,5 +30,4 @@ public class MusicController {
         MusicDto musicDto = musicService.getNextMusic(roomId);
         return musicDto != null ? ResponseEntity.ok(musicDto) : ResponseEntity.notFound().build();
     }
-
 }

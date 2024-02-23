@@ -56,6 +56,7 @@
                  .authorizeHttpRequests((authorize) -> authorize
                          /*.requestMatchers("/user/register", "/", "user/login","oauth2/**").permitAll()*/
                          .requestMatchers("/**").permitAll()
+//                         .requestMatchers("/admin").hasRole("ROLE_ADMIN")
                          .anyRequest().authenticated())
 //				.formLogin(formLogin -> formLogin
 //						.loginPage("/login")

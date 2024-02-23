@@ -57,10 +57,12 @@
      public ResponseEntity<?> deleteAccount() {
          return userService.deleteUserByUsername();
      }
+
      @PutMapping("/update_profile")
      public ResponseEntity<?> updateProfile(@RequestBody UpdateProfileDto updateProfileDto)
      {
         return userService.updateProfile(updateProfileDto);
      }
+
 
  }

@@ -48,7 +48,6 @@
          this.authenticationManager = authenticationManager;
          // 파일에서 금지어 목록을 읽어옵니다.
      }
-
      // 사용자 저장
      public ResponseEntity<?> save(CreateUserDto createUserDto){
 
@@ -159,11 +158,10 @@
         {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
-
     }
 
-     public User getAuthenticatedUserInfo() {
-         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    public User getAuthenticatedUserInfo() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
          if (authentication == null || !authentication.isAuthenticated() ||
                  authentication instanceof AnonymousAuthenticationToken) {
@@ -180,6 +178,6 @@
          else {
              return getUserInfo(authentication.getName());
          }
-     }
+    }
 
  }
