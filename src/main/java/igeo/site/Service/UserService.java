@@ -6,6 +6,7 @@
  import igeo.site.DTO.UserLoginDto;
  import igeo.site.Model.CustumOAuth2User;
  import igeo.site.Provider.JwtTokenProvider;
+ import jakarta.servlet.http.HttpServletResponse;
  import org.springframework.beans.factory.annotation.Autowired;
  import org.springframework.core.io.ClassPathResource;
  import org.springframework.http.HttpStatus;
@@ -27,9 +28,13 @@
  import igeo.site.Repository.UserRepository;
  import org.springframework.transaction.annotation.Transactional;
  import org.springframework.ui.Model;
+ import org.springframework.web.server.ResponseStatusException;
+ import org.springframework.web.servlet.HttpServletBean;
  import org.springframework.web.servlet.view.RedirectView;
 
  import java.io.IOException;
+ import java.io.UnsupportedEncodingException;
+ import java.net.URLEncoder;
  import java.nio.file.Files;
  import java.nio.file.Paths;
  import java.util.Collections;
@@ -77,9 +82,8 @@
              return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed");
          }
      }
-     public ResponseEntity<?> GoogleLogin(CustumOAuth2User oauth2User, Model model)
+     public RedirectView GoogleLogin(CustumOAuth2User oauth2User, HttpServletResponse response) throws UnsupportedEncodingException
      {
-         // 로그인 성공 후 처리
          String registrationId = oauth2User.getRegistrationId();
          // OAuth2 로그인이 성공한 경우
          if ("google".equals(registrationId)) {
@@ -89,14 +93,15 @@
              String jwtToken = jwtTokenProvider.generateToken(googleAuthentication);
              User user = getUserInfo(email);
 
-             LoginResponseDto loginResponseDto = LoginResponseDto.builder()
-                     .Token(jwtToken)
-                     .Level(user.getLevel())
-                     .Nickname(user.getName())
-                     .build();
-             return ResponseEntity.ok(loginResponseDto);
+             // 로그인 응답 데이터 준비
+             String redirectUrl = "http://localhost:3000/login-success"; // 클라이언트 측 URL
+             redirectUrl += "?token=" + jwtToken + "&level=" + user.getLevel() + "&nickname=" + URLEncoder.encode(user.getName(), "UTF-8");
+
+             // 클라이언트로 리다이렉트
+             return new RedirectView(redirectUrl);
          }
-         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 접근입니다.");
+
+         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 접근입니다.");
      }
      // 로그인된 유저 정보 조회
      public User getLoginUserInfo() {
