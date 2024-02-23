@@ -162,4 +162,24 @@
 
     }
 
+     public User getAuthenticatedUserInfo() {
+         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+         if (authentication == null || !authentication.isAuthenticated() ||
+                 authentication instanceof AnonymousAuthenticationToken) {
+             throw new IllegalArgumentException("로그인이 필요합니다.");
+         }
+
+         // OAuth2 로그인을 통한 인증인 경우
+         if (authentication.getPrincipal() instanceof OAuth2User) {
+             OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
+             String email = oauth2User.getAttribute("email");
+             return getUserInfo(email);
+         }
+         // 기타 인증 방식 (예: form 로그인)의 경우
+         else {
+             return getUserInfo(authentication.getName());
+         }
+     }
+
  }
