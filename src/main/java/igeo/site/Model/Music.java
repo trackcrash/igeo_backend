@@ -22,7 +22,6 @@ public class Music {
     private String title;
     private String song;
     private String youtube_url;
-    private String thumbnail_url;
     private String answer;
     private String hint;
     //Fk - Mission
@@ -35,12 +34,11 @@ public class Music {
 
     //Builder pattern
     @Builder
-    public Music(Long id, String title, String song, String youtube_url, String thumbnail_url, String answer, String hint, Mission mission, Float startTime, Float endTime, String category) {
+    public Music(Long id, String title, String song, String youtube_url, String answer, String hint, Mission mission, Float startTime, Float endTime, String category) {
         this.id = id;
         this.title = title;
         this.song = song;
         this.youtube_url = youtube_url;
-        this.thumbnail_url = thumbnail_url;
         this.answer = answer;
         this.hint = hint;
         this.mission = mission;
