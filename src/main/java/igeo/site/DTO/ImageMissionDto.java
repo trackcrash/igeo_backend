@@ -9,7 +9,7 @@ import java.util.List;
 
 @NoArgsConstructor
 @Data
-public class MissionDto implements Serializable {
+public class ImageMissionDto implements Serializable {
     private Long id;
     private String MapName;
     private String MapProducer;
@@ -18,13 +18,12 @@ public class MissionDto implements Serializable {
     private int PlayNum;
     private String Description;
     private Long user_id;
-    private List<MusicDto> musics;
     private List<ImageDto> images;
     private int numberOfQuestion;
     private String mapType;
 
     @Builder
-    public MissionDto(Long id, String MapName, String MapProducer, String Thumbnail, boolean active, int PlayNum, String Description, Long user_id, List<MusicDto> musics, List<ImageDto> images, int numberOfQuestion, String mapType) {
+    public ImageMissionDto(Long id, String MapName, String MapProducer, String Thumbnail, boolean active, int PlayNum, String Description, Long user_id, List<ImageDto> images, int numberOfQuestion, String mapType) {
         this.id = id;
         this.MapName = MapName;
         this.MapProducer = MapProducer;
@@ -33,7 +32,6 @@ public class MissionDto implements Serializable {
         this.PlayNum = PlayNum;
         this.Description = Description;
         this.user_id = user_id;
-        this.musics = musics;
         this.images = images;
         this.numberOfQuestion = numberOfQuestion;
         this.mapType = mapType;

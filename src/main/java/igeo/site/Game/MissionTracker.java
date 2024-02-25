@@ -3,6 +3,7 @@ package igeo.site.Game;
 import igeo.site.DTO.AnswerDto;
 import igeo.site.Model.Answer;
 import igeo.site.Model.Category;
+import igeo.site.Model.Image;
 import igeo.site.Model.Music;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,9 +19,11 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class MissionTracker {
-    private final Map<Long, Integer> currentMusicIndex = new ConcurrentHashMap<>();
+    private final Map<Long, Integer> currentIndex = new ConcurrentHashMap<>();
     private final Map<Long, List<Music>> musicLists = new ConcurrentHashMap<>();
     private final Map<Long, Answer> answers = new ConcurrentHashMap<>();
+    private final Map<Long, List<Image>> imageLists = new ConcurrentHashMap<>();
+
 
     private final Map<Long, AnswerDto> answerDtos = new ConcurrentHashMap<>();
 
@@ -177,22 +180,36 @@ public class MissionTracker {
     }
 
     //현재 음악 인덱스 가져오기
-    public int getCurrentMusicIndex(Long roomId) {
-        return currentMusicIndex.getOrDefault(roomId, -1);
+    public int getCurrentIndex(Long roomId) {
+        return currentIndex.getOrDefault(roomId, -1);
     }
     //현재 음악 인덱스 저장
     public void setCurrentMusic(Long roomId, int index) {
-        currentMusicIndex.put(roomId, index);
+        currentIndex.put(roomId, index);
+    }
+
+    //현재 음악 인덱스 저장
+    public void setCurrentImage(Long roomId, int index) {
+        currentIndex.put(roomId, index);
     }
     //음악 리스트 섞기
     public void shuffleMusic(List<Music> musicList){
         Collections.shuffle(musicList);
     }
+    public void shuffleImage(List<Image> imageList){
+        Collections.shuffle(imageList);
+    }
     //다음 곡 가져오기
     public void nextMusic(Long roomId) {
-        int currentIndex = getCurrentMusicIndex(roomId);
-        if (currentIndex >= 0 && currentIndex < musicLists.get(roomId).size() - 1) {
-            currentMusicIndex.put(roomId, currentIndex + 1);
+        int newCurrentIndex = getCurrentIndex(roomId);
+        if (newCurrentIndex >= 0 && newCurrentIndex < musicLists.get(roomId).size() - 1) {
+            currentIndex.put(roomId, newCurrentIndex + 1);
+        }
+    }
+    public void nextImage(Long roomId) {
+        int newCurrentIndex = getCurrentIndex(roomId);
+        if (newCurrentIndex >= 0 && newCurrentIndex < imageLists.get(roomId).size() - 1) {
+            currentIndex.put(roomId, newCurrentIndex + 1);
         }
     }
 
@@ -200,8 +217,14 @@ public class MissionTracker {
     public void setMusicList(Long roomId, List<Music> musicList) {
         musicLists.put(roomId, musicList);
     }
+    public void setImageList(Long roomId, List<Image> imageList) {
+        imageLists.put(roomId, imageList);
+    }
     //음악 리스트 가져오기
     public List<Music> getMusicList(Long roomId) {
         return musicLists.getOrDefault(roomId, new ArrayList<>());
+    }
+    public List<Image> getImageList(Long roomId) {
+        return imageLists.getOrDefault(roomId, new ArrayList<>());
     }
 }

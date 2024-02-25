@@ -27,7 +27,6 @@ public class MusicService {
     public List<Music> getMusicByMission(Long id) {
         return musicRepository.findByMission_Id(id);
     }
-
     //List에서 하나씩 꺼내서 MusicDto로 변환
     public MusicDto transferMusicData(List<Music> musicList, int index) {
         Music music = musicList.get(index);
@@ -77,6 +76,7 @@ public class MusicService {
         musicRepository.delete(music);
     }
 
+
     //게임 시작시 음악 리스트 가져오기
     public MusicDto startMission(Long roomId, Long missionId) {
         List<Music> musicList = getMusicByMission(missionId);
@@ -100,7 +100,7 @@ public class MusicService {
     public MusicDto getNextMusic(Long roomId) {
         tracker.nextMusic(roomId);
         List<Music> missionList = tracker.getMusicList(roomId);
-        int currentIndex = tracker.getCurrentMusicIndex(roomId);
+        int currentIndex = tracker.getCurrentIndex(roomId);
         Music currentMusic = missionList.get(currentIndex);
         String rawAnswer = currentMusic.getAnswer();
         String categoryData = currentMusic.getCategory();
@@ -113,7 +113,7 @@ public class MusicService {
 
     public MusicDto getMusic(Long roomId) {
         List<Music> missionList = tracker.getMusicList(roomId);
-        int currentIndex = tracker.getCurrentMusicIndex(roomId);
+        int currentIndex = tracker.getCurrentIndex(roomId);
         if (currentIndex >= 0 && currentIndex < missionList.size()) {
             return transferMusicData(missionList, currentIndex);
         }
