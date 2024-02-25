@@ -35,7 +35,6 @@ public class MusicService {
                 .title(music.getTitle())
                 .song(music.getSong())
                 .youtube_url(music.getYoutube_url())
-                .thumbnail_url(music.getThumbnail_url())
                 .answer(music.getAnswer())
                 .hint(music.getHint())
                 .startTime(music.getStartTime())
@@ -56,7 +55,6 @@ public class MusicService {
                 .title(musicDto.getTitle())
                 .song(musicDto.getSong())
                 .youtube_url(musicDto.getYoutube_url())
-                .thumbnail_url(musicDto.getThumbnail_url())
                 .answer(musicDto.getAnswer())
                 .hint(musicDto.getHint())
                 .startTime(musicDto.getStartTime())
@@ -126,7 +124,6 @@ public class MusicService {
         music.setTitle(musicDto.getTitle());
         music.setSong(musicDto.getSong());
         music.setYoutube_url(musicDto.getYoutube_url());
-        music.setThumbnail_url(musicDto.getThumbnail_url());
         music.setAnswer(musicDto.getAnswer());
         music.setHint(musicDto.getHint());
         music.setStartTime(musicDto.getStartTime());
