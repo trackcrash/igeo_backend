@@ -90,7 +90,7 @@
          if ("google".equals(registrationId)) {
              String email = oauth2User.getAttribute("email");
              // JWT 토큰 생성
-             Authentication googleAuthentication = new UsernamePasswordAuthenticationToken(email, null);
+             Authentication googleAuthentication = new UsernamePasswordAuthenticationToken(email, "N/A");
              String jwtToken = jwtTokenProvider.generateToken(googleAuthentication);
              User user = getUserInfo(email);
 
