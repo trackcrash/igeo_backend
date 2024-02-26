@@ -3,7 +3,9 @@ package igeo.site.Controller;
 import igeo.site.DTO.CreateRoomDto;
 import igeo.site.DTO.RoomDto;
 import igeo.site.DTO.SkipDto;
+import igeo.site.Model.User;
 import igeo.site.Service.RoomService;
+import igeo.site.Service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class RoomController {
 
     private final RoomService roomService;
+    private final UserService userService;
 
     @PostMapping("/room_list/create")
     public ResponseEntity<?> createRoom(@Valid @RequestBody CreateRoomDto createRoomDto) {
@@ -39,7 +42,8 @@ public class RoomController {
 
     @PostMapping("/room_list/join")
     public ResponseEntity<?> joinRoom(@Valid @RequestBody RoomDto roomDto) {
-        if (roomService.joinRoom(roomDto)) {
+        User user = userService.getAuthenticatedUserInfo();
+        if (roomService.joinRoom(roomDto, user)) {
             return ResponseEntity.ok().build();
         }else {
             throw new IllegalArgumentException("오류가 발생했습니다");
