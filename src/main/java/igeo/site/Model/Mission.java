@@ -42,18 +42,4 @@ public class Mission {
         this.mapType = mapType;
     }
 
-    public static Mission createMission(String MapName, String MapProducer, String Thumbnail, boolean active, int PlayNum, String Description, User user, int numberOfQuestion, String mapType) {
-        Mission mission = Mission.builder()
-                .MapName(MapName)
-                .MapProducer(MapProducer)
-                .Thumbnail(Thumbnail)
-                .active(active)
-                .PlayNum(PlayNum)
-                .Description(Description)
-                .user(user)
-                .numberOfQuestion(numberOfQuestion)
-                .mapType(mapType)
-                .build();
-        return mission;
-    }
 }

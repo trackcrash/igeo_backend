@@ -32,7 +32,8 @@ public class RoomService {
     //방에 유저추가
     public boolean joinRoom(RoomDto roomDto, User user) {
         String roomId = roomDto.getRoomId();
-        if(user != null && roomId != null && roomTracker.getRoom(roomId).getPassword() == roomDto.getPassword() && roomTracker.getRoom(roomId).getCurrentUsers() < roomTracker.getRoom(roomId).getMaxUsers()) {
+        String password = roomDto.getPassword();
+        if(user != null && roomId != null && roomTracker.getRoom(roomId).getPassword().equals(password) && roomTracker.getRoom(roomId).getCurrentUsers() < roomTracker.getRoom(roomId).getMaxUsers()) {
             return roomTracker.addUser(roomId, user);
         } else {
             return false;
