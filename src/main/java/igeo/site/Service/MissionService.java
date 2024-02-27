@@ -7,11 +7,14 @@ import igeo.site.Model.Image;
 import igeo.site.Model.Mission;
 
 import igeo.site.Model.Music;
+import igeo.site.Model.User;
 import igeo.site.Repository.ImageRepository;
 import igeo.site.Repository.MissionRepository;
 import igeo.site.Repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -29,6 +32,7 @@ public class MissionService {
     private final ImageService imageService;
     private final ImageRepository imageRepository;
 
+    private final UserService userService;
     //미션 저장
     //클라이언트에서 받은 정보를 미션객체로 만들어서 저장후 음악저장
     //mission_id가 필요하기 때문에 미션 저장 후 음악 저장
@@ -69,21 +73,18 @@ public class MissionService {
     }
 
     //미션 수정
-    public MissionDto updateMission(Long missionId, MissionDto missionDto) {
-        Mission mission = missionRepository.findById(missionId).orElseThrow(
+    public MissionDto updateMission(MissionDto missionDto) {
+        Mission mission = missionRepository.findById(missionDto.getId()).orElseThrow(
                 () -> new IllegalStateException("존재하지 않는 미션입니다.")
         );
         boolean flag = missionDto.getMapType().equals("MUSIC");
-        //TODO: 유저기능 완성후 주석 해제
-        /*// 사용자 인증 정보 확인
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findByEmail(userDetails.getUsername());
-        if(user == null) throw new EntityNotFoundException("잘못된 접근입니다");
+        User user = userService.getAuthenticatedUserInfo();
+        if(user == null) throw new EntityNotFoundException("잘못된 접근입니다.");
 
         // 권한 확인
         if (!mission.getUser().getId().equals(user.getId())) {
-            throw new AccessDeniedException("잘못된 접근입니다");
-        }*/
+            throw new AccessDeniedException("유저정보가 다릅니다");
+        }
 
         mission.setMapName(missionDto.getMapName());
         mission.setMapProducer(missionDto.getMapProducer());
@@ -134,12 +135,12 @@ public class MissionService {
                 imageService.delete(image);
             }
         }
-        //TODO: 유저기능 완성후 주석 해제
-        /*// 사용자 인증 정보 확인
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findByEmail(userDetails.getUsername());
-        if(user == null) throw new EntityNotFoundException("잘못된 접근입니다");*/
+
+        // 사용자 인증 정보 확인
+        User user = userService.getAuthenticatedUserInfo();
+        if(user == null) throw new EntityNotFoundException("잘못된 접근입니다");
         missionRepository.delete(mission);
+
     }
 
     //전체 조회
@@ -178,18 +179,9 @@ public class MissionService {
                 .build();
     }
 
-//    //유저가 소유한 미션 조회
-//    public List<MissionDto> getOwnedMaps(Long userId) {
-//        List<Mission> missions = missionRepository.findByUserId(userId);
-//        List<MissionDto> missionDtos = new ArrayList<>();
-//        for (Mission mission : missions) {
-//            missionDtos.add(getMission(mission.getId()));
-//        }
-//        return missionDtos;
-//    }
-
-    public List<Mission> getOwnedMaps(Long userId) {
-        List<Mission> missions = missionRepository.findByUserId(userId);
+    public List<Mission> getOwnedMaps() {
+        User user = userService.getAuthenticatedUserInfo();
+        List<Mission> missions = missionRepository.findByUserId(user.getId());
         //user는 제외
         for (Mission mission : missions) {
             mission.setUser(null);

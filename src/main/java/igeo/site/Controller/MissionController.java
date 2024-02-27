@@ -27,9 +27,9 @@ public class MissionController {
     }
 
     //Update
-    @PutMapping("/update/{id}")
-    public ResponseEntity<MissionDto> updateMission(@RequestBody MissionDto missionDto, @PathVariable Long id) {
-        missionService.updateMission(id, missionDto);
+    @PutMapping("/update")
+    public ResponseEntity<MissionDto> updateMission(@RequestBody MissionDto missionDto) {
+        missionService.updateMission(missionDto);
         return ResponseEntity.ok(missionDto);
     }
 
@@ -49,7 +49,6 @@ public class MissionController {
     //OWNED MAPS
     @GetMapping("/owned")
     public ResponseEntity<?> getOwnedMaps() {
-        User user = userService.getAuthenticatedUserInfo();
-        return ResponseEntity.ok().body(missionService.getOwnedMaps(user.getId()));
+        return ResponseEntity.ok().body(missionService.getOwnedMaps());
     }
 }

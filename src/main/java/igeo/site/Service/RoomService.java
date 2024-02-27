@@ -25,12 +25,12 @@ public class RoomService {
 
     //방생성
     public Room createRoom(CreateRoomDto createRoomDto) {
-        String name = createRoomDto.getSender();
-        User user = userService.getUserByName(name);
+        User user = userService.getAuthenticatedUserInfo();
         return roomTracker.createRoom(createRoomDto, user);
     }
     //방에 유저추가
-    public boolean joinRoom(RoomDto roomDto, User user) {
+    public boolean joinRoom(RoomDto roomDto) {
+        User user = userService.getAuthenticatedUserInfo();
         String roomId = roomDto.getRoomId();
         String password = roomDto.getPassword();
         if(user != null && roomId != null && roomTracker.getRoom(roomId).getPassword().equals(password) && roomTracker.getRoom(roomId).getCurrentUsers() < roomTracker.getRoom(roomId).getMaxUsers()) {
