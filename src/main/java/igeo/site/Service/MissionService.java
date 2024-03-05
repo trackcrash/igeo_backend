@@ -48,12 +48,12 @@ public class MissionService {
         }
         //클라이언트에서 받은 정보를 미션객체화
         Mission mission = Mission.builder()
-                .MapName(missionDto.getMapName())
-                .MapProducer(missionDto.getMapProducer())
-                .Thumbnail(missionDto.getThumbnail())
+                .mapName(missionDto.getMapName())
+                .mapProducer(missionDto.getMapProducer())
+                .thumbnail(missionDto.getThumbnail())
                 .active(true)
-                .PlayNum(0)
-                .Description(missionDto.getDescription())
+                .playNum(0)
+                .description(missionDto.getDescription())
                 .user(user)
                 .numberOfQuestion(questionCount)
                 .mapType(missionDto.getMapType())

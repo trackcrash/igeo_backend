@@ -10,33 +10,33 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-@Table(name="MissionTable")
+@Table(name="missionTable")
 public class Mission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String MapName;
-    private String MapProducer;
-    private String Thumbnail;
+    private String mapName;
+    private String mapProducer;
+    private String thumbnail;
     private boolean active;
-    private int PlayNum;
-    private String Description;
+    private int playNum;
+    private String description;
     private int numberOfQuestion;
     private String mapType;
 
     @ManyToOne
-    @JoinColumn(name = "MapProducer_id", referencedColumnName = "id")
+    @JoinColumn(name = "mapProducer_id", referencedColumnName = "id")
     private User user;
 
     @Builder
-    public Mission(Long id, String MapName, String MapProducer, String Thumbnail, boolean active, int PlayNum, String Description, User user, int numberOfQuestion, String mapType) {
+    public Mission(Long id, String mapName, String mapProducer, String thumbnail, boolean active, int playNum, String description, User user, int numberOfQuestion, String mapType) {
         this.id = id;
-        this.MapName = MapName;
-        this.MapProducer = MapProducer;
-        this.Thumbnail = Thumbnail;
+        this.mapName = mapName;
+        this.mapProducer = mapProducer;
+        this.thumbnail = thumbnail;
         this.active = active;
-        this.PlayNum = PlayNum;
-        this.Description = Description;
+        this.playNum = playNum;
+        this.description = description;
         this.user = user;
         this.numberOfQuestion = numberOfQuestion;
         this.mapType = mapType;
