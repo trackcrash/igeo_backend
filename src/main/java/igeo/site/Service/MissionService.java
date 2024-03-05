@@ -2,6 +2,7 @@ package igeo.site.Service;
 
 import igeo.site.DTO.ImageDto;
 import igeo.site.DTO.MissionDto;
+import igeo.site.DTO.MissionSelectDto;
 import igeo.site.DTO.MusicDto;
 import igeo.site.Model.Image;
 import igeo.site.Model.Mission;
@@ -143,9 +144,21 @@ public class MissionService {
 
     }
 
-    //전체 조회
-    public List<Mission> getAllMission(){
-        return missionRepository.findAll();
+    //미션선택 목록 조회
+    public List<MissionSelectDto> getAllMission(){
+        List<Mission> missions = missionRepository.findAll();
+        List<MissionSelectDto> missionSelectDtos = new ArrayList<>();
+        for (Mission mission : missions) {
+            missionSelectDtos.add(MissionSelectDto.builder()
+                    .id(mission.getId())
+                    .thumbnail(mission.getThumbnail())
+                    .mapName(mission.getMapName())
+                    .description(mission.getDescription())
+                    .mapType(mission.getMapType())
+                    .numberOfQuestion(mission.getNumberOfQuestion())
+                    .build());
+        }
+        return missionSelectDtos;
     }
 
     //미션 조회

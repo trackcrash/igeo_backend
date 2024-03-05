@@ -46,6 +46,12 @@ public class MissionController {
         return ResponseEntity.ok(missionService.getMission(id));
     }
 
+    //Get All
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllMissions() {
+        return ResponseEntity.ok(missionService.getAllMission());
+    }
+
     //OWNED MAPS
     @GetMapping("/owned")
     public ResponseEntity<?> getOwnedMaps() {
