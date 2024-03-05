@@ -15,12 +15,12 @@ public class MusicDto implements Serializable {
     private String youtube_url;
     private String answer;
     private String hint;
-    private Float startTime;
-    private Float endTime;
+    private String startTime;
+    private String endTime;
     private String category;
 
     @Builder
-    public MusicDto(Long id,String title, String song, String youtube_url, String answer, String hint, Float startTime, Float endTime, String category) {
+    public MusicDto(Long id,String title, String song, String youtube_url, String answer, String hint, String startTime, String endTime, String category) {
         this.id = id;
         this.title = title;
         this.song = song;

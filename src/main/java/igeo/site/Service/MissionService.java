@@ -38,6 +38,7 @@ public class MissionService {
     //클라이언트에서 받은 정보를 미션객체로 만들어서 저장후 음악저장
     //mission_id가 필요하기 때문에 미션 저장 후 음악 저장
     public MissionDto saveMission(MissionDto missionDto) {
+        User user = userService.getAuthenticatedUserInfo();
         boolean flag = missionDto.getMapType().equals("MUSIC");
         int questionCount = 0;
         if(flag) {
@@ -53,7 +54,7 @@ public class MissionService {
                 .active(true)
                 .PlayNum(0)
                 .Description(missionDto.getDescription())
-                .user(userRepository.findById(missionDto.getUser_id()).orElse(null))
+                .user(user)
                 .numberOfQuestion(questionCount)
                 .mapType(missionDto.getMapType())
                 .build();
@@ -151,10 +152,10 @@ public class MissionService {
         for (Mission mission : missions) {
             missionSelectDtos.add(MissionSelectDto.builder()
                     .id(mission.getId())
-                    .thumbnail(mission.getThumbnail())
-                    .mapName(mission.getMapName())
-                    .description(mission.getDescription())
-                    .mapType(mission.getMapType())
+                    .Thumbnail(mission.getThumbnail())
+                    .MapName(mission.getMapName())
+                    .Description(mission.getDescription())
+                    .MapType(mission.getMapType())
                     .numberOfQuestion(mission.getNumberOfQuestion())
                     .build());
         }

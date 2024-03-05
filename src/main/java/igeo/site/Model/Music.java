@@ -28,13 +28,13 @@ public class Music {
     @ManyToOne
     @JoinColumn(name = "mission_id", referencedColumnName = "id")
     private Mission mission;
-    private Float startTime;
-    private Float endTime;
+    private String startTime;
+    private String endTime;
     private String category;
 
     //Builder pattern
     @Builder
-    public Music(Long id, String title, String song, String youtube_url, String answer, String hint, Mission mission, Float startTime, Float endTime, String category) {
+    public Music(Long id, String title, String song, String youtube_url, String answer, String hint, Mission mission, String startTime, String endTime, String category) {
         this.id = id;
         this.title = title;
         this.song = song;
