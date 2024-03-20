@@ -62,10 +62,6 @@ public class Room {
         return userId.toString().equals(owner);
     }
 
-    public int getCurrentUsers() {
-        return currentUsers.size();
-    }
-
     public void removeUser(Long userId) {
         currentUsers.remove(userId);
     }

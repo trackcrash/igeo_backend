@@ -1,14 +1,13 @@
 package igeo.site.Service;
 
-import igeo.site.DTO.CreateRoomDto;
-import igeo.site.DTO.RoomDto;
-import igeo.site.DTO.RoomListDto;
+import igeo.site.DTO.*;
 import igeo.site.Game.RoomTracker;
 import igeo.site.Model.Mission;
 import igeo.site.Model.Room;
 import igeo.site.Model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -33,7 +32,7 @@ public class RoomService {
         User user = userService.getAuthenticatedUserInfo();
         String roomId = roomDto.getRoomId();
         String password = roomDto.getPassword();
-        if(user != null && roomId != null && roomTracker.getRoom(roomId).getPassword().equals(password) && roomTracker.getRoom(roomId).getCurrentUsers() < roomTracker.getRoom(roomId).getMaxUsers()) {
+        if(user != null && roomId != null && roomTracker.getRoom(roomId).getPassword().equals(password) && roomTracker.getRoom(roomId).getCurrentUsersCount() < roomTracker.getRoom(roomId).getMaxUsers()) {
             return roomTracker.addUser(roomId, user);
         } else {
             return false;
@@ -83,7 +82,7 @@ public class RoomService {
     public void leaveRoom(String roomId, String userName) {
         User user = userService.getUserByName(userName);
         roomTracker.leaveRoom(roomId, user);
-        if (roomTracker.getRoom(roomId).getCurrentUsers() == 0) {
+        if (roomTracker.getRoom(roomId).getCurrentUsersCount() == 0) {
             roomTracker.deleteRoom(roomId);
         }
     }
@@ -91,5 +90,33 @@ public class RoomService {
     //미션 선택
     public void selectMission(String roomId, Long missionId) {
         roomTracker.selectMission(roomId, missionId);
+    }
+    private String nickname;
+    private int character;
+    private int level;
+    public ResponseEntity<?> getRoomStatus(String roomId) {
+        Room room = roomTracker.getRoom(roomId);
+        List<RoomUserInfo> roomUserInfos = new ArrayList<>();
+
+        for(Long userId : room.getCurrentUsers()){
+            User user = userService.getUserById(userId);
+            RoomUserInfo roomUserInfo = RoomUserInfo.builder()
+                    .nickname(user.getName())
+                    .character(user.getCharacter())
+                    .level(user.getLevel())
+                    .build();
+            roomUserInfos.add(roomUserInfo);
+        }
+
+        return ResponseEntity.ok(RoomStatusDto.builder()
+                        .type(room.getType())
+                        .roomName(room.getRoomName())
+                        .owner(room.getOwner())
+                        .maxUsers(room.getMaxUsers())
+                        .currentUsers(roomUserInfos)
+                        .missionId(room.getMissionId())
+                        .currentUsers(roomUserInfos)
+                        .roomId(roomId)
+                .build());
     }
 }

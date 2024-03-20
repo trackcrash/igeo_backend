@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.util.List;
 
-@NoArgsConstructor
 @Data
 public class MissionDto implements Serializable {
     private Long id;
