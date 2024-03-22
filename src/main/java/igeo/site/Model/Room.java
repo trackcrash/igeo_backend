@@ -41,7 +41,7 @@ public class Room {
         if (!skipVotes.contains(userId) && currentUsers.contains(userId)) {
             skipVotes.add(userId);
             int RequireSkipVote = skipVoteCount(currentUsers.size());
-            return skipVotes.size() > RequireSkipVote;
+            return skipVotes.size() >= RequireSkipVote;
         }
         return false;
     }
