@@ -18,15 +18,15 @@ public class ChatService {
     public Object message(ChatDto chatDto, Long roomId) {
         switch(chatDto.getType()) {
             case ENTER:
-                chatDto.setSender("System");
                 chatDto.setMessage(chatDto.getSender() + "님이 입장하셨습니다.");
+                chatDto.setSender("System");
                 break;
             case TALK:
                 String msg = chatDto.getMessage();
                 if(missionTracker.checkAnswer(roomId, msg)){
                     AnswerDto currentAnswer = musicService.getCurrentAnswer(roomId);
-                    chatDto.setSender("System");
                     chatDto.setMessage(chatDto.getSender() + "님이 정답을 맞추셨습니다.");
+                    chatDto.setSender("System");
                     return ResponseAnswerDto.builder()
                             .answer(currentAnswer)
                             .chat(chatDto)
@@ -36,8 +36,8 @@ public class ChatService {
                 }
                 break;
             case QUIT:
-                chatDto.setSender("System");
                 chatDto.setMessage(chatDto.getSender() + "님이 퇴장하셨습니다.");
+                chatDto.setSender("System");
                 break;
         }
         return chatDto;
