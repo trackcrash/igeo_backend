@@ -92,7 +92,7 @@ public class MissionService {
         mission.setMapProducer(missionDto.getMapProducer());
         mission.setThumbnail(missionDto.getThumbnail());
         mission.setDescription(missionDto.getDescription());
-        mission.setUser(userRepository.findById(missionDto.getUser_id()).orElse(null));
+        mission.setUser(user);
         if(flag)
         {
             mission.setNumberOfQuestion(missionDto.getMusics().size());
