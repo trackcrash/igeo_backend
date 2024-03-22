@@ -27,7 +27,7 @@ public class ChatService {
                     AnswerDto currentAnswer = musicService.getCurrentAnswer(roomId);
                     chatDto.setSender("System");
                     chatDto.setMessage(chatDto.getSender() + "님이 정답을 맞추셨습니다.");
-                    ResponseAnswerDto responseAnswerDto = ResponseAnswerDto.builder()
+                    return ResponseAnswerDto.builder()
                             .answer(currentAnswer)
                             .chat(chatDto)
                             .build();
