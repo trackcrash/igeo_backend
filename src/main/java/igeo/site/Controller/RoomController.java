@@ -55,25 +55,6 @@ public class RoomController {
 
     }
 
-    @PostMapping("/skip")
-    public ResponseEntity<?> addSkipVote(@Valid @RequestBody SkipDto skipDto) {
-        boolean result = roomService.addSkipVote(skipDto.getRoomId(), skipDto.getUserName());
-        if (result) {
-            return ResponseEntity.ok().body(true);
-        }else{
-            return ResponseEntity.ok().body(false);
-        }
-    }
-
-    @PostMapping("/owner_skip")
-    public ResponseEntity<?> ownerSkipVote(@Valid @RequestBody SkipDto skipDto) {
-        if (roomService.ownerSkipVote(skipDto.getRoomId(), skipDto.getUserName())) {
-            return ResponseEntity.ok().build();
-        }else {
-            throw new IllegalArgumentException("방장이 아닙니다");
-        }
-    }
-
     @PostMapping("/play/{roomId}/{missionId}")
     public ResponseEntity<?> setMission(@PathVariable String roomId, @PathVariable Long missionId) {
         roomService.selectMission(roomId, missionId);
