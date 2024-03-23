@@ -58,6 +58,7 @@ public class ChatController {
     @MessageMapping("/missionSelect")
     public void missionSelect(@Payload StartMissionDto startMissionDto) {
         MissionDto missionDto = missionService.getMission(startMissionDto.getMissionId());
+        roomService.selectMission(startMissionDto.getRoomId().toString(), startMissionDto.getMissionId());
         template.convertAndSend("/missionSelect/" + startMissionDto.getRoomId(), missionDto);
     }
 }
