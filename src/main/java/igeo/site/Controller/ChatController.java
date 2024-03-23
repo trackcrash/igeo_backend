@@ -36,7 +36,7 @@ public class ChatController {
         boolean result = roomService.addSkipVote(skipDto.getRoomId(), skipDto.getUserName());
         if(result){
             MusicDto musicDto = musicService.getNextMusic(Long.valueOf(skipDto.getRoomId()));
-            template.convertAndSend("/skip/" + skipDto.getRoomId(), musicDto);
+            template.convertAndSend("/startMission/" + skipDto.getRoomId(), musicDto);
         }
     }
 
