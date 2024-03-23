@@ -3,8 +3,10 @@ package igeo.site.DTO;
 import lombok.Builder;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class LoginResponseDto {
+public class LoginResponseDto implements Serializable {
 
     private String Token;
     private int Level;

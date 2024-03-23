@@ -2,10 +2,12 @@ package igeo.site.DTO;
 
 import lombok.Builder;
 import lombok.Data;
+
+import java.io.Serializable;
 import java.util.List;
 
 @Data
-public class RoomStatusDto {
+public class RoomStatusDto implements Serializable {
     private CreateRoomDto.RoomType type;
     private String roomId;
     private String roomName;

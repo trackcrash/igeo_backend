@@ -90,10 +90,11 @@ public class MusicService {
         }
         return null;
     }
-
+    //정답 가져오기
     public AnswerDto getCurrentAnswer(Long roomId) {
         return tracker.getAnswerDto(roomId);
     }
+
     // 다음 음악으로 넘어가기
     public MusicDto getNextMusic(Long roomId) {
         tracker.nextMusic(roomId);
@@ -109,6 +110,7 @@ public class MusicService {
         return null;
     }
 
+    //음악 가져오기
     public MusicDto getMusic(Long roomId) {
         List<Music> missionList = tracker.getMusicList(roomId);
         int currentIndex = tracker.getCurrentIndex(roomId);

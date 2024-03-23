@@ -4,12 +4,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Data
 @NoArgsConstructor
-public class RoomListDto {
+public class RoomListDto implements Serializable {
 
     private String roomId;
     private CreateRoomDto.RoomType type;

@@ -3,8 +3,10 @@ package igeo.site.DTO;
 import lombok.Builder;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class StartMissionDto {
+public class StartMissionDto implements Serializable {
     private Long roomId;
     private Long missionId;
 

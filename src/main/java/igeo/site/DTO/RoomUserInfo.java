@@ -3,8 +3,10 @@ package igeo.site.DTO;
 import lombok.Builder;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class RoomUserInfo {
+public class RoomUserInfo implements Serializable {
     private String nickname;
     private int character;
     private int level;

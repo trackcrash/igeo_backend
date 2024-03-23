@@ -1,10 +1,8 @@
 package igeo.site.Controller;
 
-import igeo.site.DTO.ChatDto;
-import igeo.site.DTO.MusicDto;
-import igeo.site.DTO.SkipDto;
-import igeo.site.DTO.StartMissionDto;
+import igeo.site.DTO.*;
 import igeo.site.Service.ChatService;
+import igeo.site.Service.MissionService;
 import igeo.site.Service.MusicService;
 import igeo.site.Service.RoomService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +21,7 @@ public class ChatController {
     private final ChatService chatService;
     private final RoomService roomService;
     private final MusicService musicService;
+    private final MissionService missionService;
     private final SimpMessagingTemplate template;
 
     @MessageMapping("/message")
@@ -50,10 +49,15 @@ public class ChatController {
         }
     }
 
-    @MessageMapping("/StartMission")
+    @MessageMapping("/startMission")
     public void startMission(@Payload StartMissionDto startMissionDto) {
         MusicDto musicDto = musicService.startMission(startMissionDto.getRoomId(), startMissionDto.getMissionId());
         template.convertAndSend("/startMission/" + startMissionDto.getRoomId(), musicDto);
     }
 
+    @MessageMapping("/missionSelect")
+    public void missionSelect(@Payload StartMissionDto startMissionDto) {
+        MissionDto missionDto = missionService.getMission(startMissionDto.getMissionId());
+        template.convertAndSend("/missionSelect/" + startMissionDto.getRoomId(), missionDto);
+    }
 }

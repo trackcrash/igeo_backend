@@ -5,9 +5,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @NoArgsConstructor
-public class RoomDto {
+public class RoomDto implements Serializable {
 
     private CreateRoomDto.RoomType type;
     private String roomId;

@@ -3,8 +3,10 @@ package igeo.site.DTO;
 import lombok.Builder;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class AnswerDto {
+public class AnswerDto implements Serializable {
     private String category;
     private String answer;
     private String message;

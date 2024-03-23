@@ -4,9 +4,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @NoArgsConstructor
-public class ChatDto {
+public class ChatDto implements Serializable {
     private MessageType type;
     private String roomId;
     private String sender;
