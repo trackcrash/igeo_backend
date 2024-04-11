@@ -1,5 +1,6 @@
  package igeo.site.Controller;
 
+ import igeo.site.DTO.NicknameDTO;
  import igeo.site.DTO.UpdateProfileDto;
  import igeo.site.DTO.UserLoginDto;
  import igeo.site.Model.User;
@@ -14,6 +15,8 @@
  import igeo.site.Service.UserService;
 
  import jakarta.validation.Valid;
+
+ import java.util.Objects;
 
  @RestController
  @RequiredArgsConstructor
@@ -35,6 +38,14 @@
          return userService.getAuthenticatedUserInfo();
      }
 
+     // 닉네임 중복 확인
+     @GetMapping("/check_nickname")
+     public ResponseEntity<?> checkNickname(@Valid @ModelAttribute NicknameDTO nicknameDTO, BindingResult bindingResult) {
+         if (bindingResult.hasErrors()) {
+             return ResponseEntity.badRequest().body(Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage());
+         }
+         return userService.checkNickname(nicknameDTO.getName());
+     }
 
      // 회원 가입
      @PostMapping("/register")

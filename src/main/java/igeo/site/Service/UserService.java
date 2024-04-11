@@ -7,6 +7,7 @@
  import igeo.site.Model.CustumOAuth2User;
  import igeo.site.Provider.JwtTokenProvider;
  import jakarta.servlet.http.HttpServletResponse;
+ import lombok.RequiredArgsConstructor;
  import org.springframework.beans.factory.annotation.Autowired;
  import org.springframework.core.io.ClassPathResource;
  import org.springframework.http.HttpStatus;
@@ -42,27 +43,26 @@
 
 
  @Service
+ @RequiredArgsConstructor
  public class UserService {
      private final JwtTokenProvider jwtTokenProvider;
      private final UserRepository userRepository;
      private final PasswordEncoder passwordEncoder;
      private final AuthenticationManager authenticationManager;
 
-
-     @Autowired
-     public UserService(JwtTokenProvider jwtTokenProvider, UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
-         this.jwtTokenProvider = jwtTokenProvider;
-         this.userRepository = userRepository;
-         this.passwordEncoder = passwordEncoder;
-         this.authenticationManager = authenticationManager;
-         // 파일에서 금지어 목록을 읽어옵니다.
-     }
      // 사용자 저장
      public ResponseEntity<?> save(CreateUserDto createUserDto){
 
          User user = User.createUser(createUserDto, passwordEncoder);
          User SavedUser = userRepository.save(user);
          return ResponseEntity.ok("User registered successfully with ID: " + SavedUser.getId());
+     }
+     // 닉네임 중복 확인
+     public ResponseEntity<?> checkNickname(String name) {
+         if (userRepository.existsByName(name)) {
+             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미 존재하는 닉네임입니다.");
+         }
+         return ResponseEntity.ok().body("사용 가능한 닉네임입니다.");
      }
      // 로그인
      public ResponseEntity<?> login(UserLoginDto userLoginDto) {

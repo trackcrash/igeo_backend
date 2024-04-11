@@ -7,6 +7,8 @@
  import org.springframework.security.crypto.password.PasswordEncoder;
  import igeo.site.DTO.CreateUserDto;
  import jakarta.persistence.*;
+
+ import javax.validation.constraints.Size;
  import java.time.LocalDateTime;
 
  @Entity
@@ -18,6 +20,7 @@
      @Id
      @GeneratedValue(strategy = GenerationType.IDENTITY)
      private Long id;
+     @Size(max = 8, message = "이름은 8글자 이하로 해주세요.")
      private String name;
      private String password;
      private String email;
