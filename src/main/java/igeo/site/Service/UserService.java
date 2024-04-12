@@ -59,6 +59,7 @@
      }
      // 닉네임 중복 확인
      public ResponseEntity<?> checkNickname(String name) {
+         System.out.println(name + " 존재여부 : "+userRepository.existsByName(name));
          if (userRepository.existsByName(name)) {
              return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미 존재하는 닉네임입니다.");
          }
@@ -126,6 +127,26 @@
          }
          return user;
      }
+
+     //닉네임 업데이트
+    public ResponseEntity<?> updateNickname(String newNickname)
+    {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && !(authentication instanceof AnonymousAuthenticationToken) && authentication.isAuthenticated()) {
+            String email = authentication.getName();
+            User user = getUserInfo(email);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("유저가 아닙니다.");
+            }
+            user.setName(newNickname);
+            userRepository.save(user);
+            return ResponseEntity.ok().body(user.getName());
+        } else {
+            // 인증되지 않은 경우에 대한 처리
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증되지않은 유저입니다.");
+        }
+    }
+
 
      // 유저 삭제
      public ResponseEntity<?> deleteUserByUsername() {

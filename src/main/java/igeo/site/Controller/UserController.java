@@ -40,12 +40,15 @@
 
      // 닉네임 중복 확인
      @PostMapping("/check_nickname")
-     public ResponseEntity<?> checkNickname(@Valid @RequestBody NicknameDTO nicknameDTO, BindingResult bindingResult) {
-//         if (bindingResult.hasErrors()) {
-//             return ResponseEntity.badRequest().body(Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage());
-//         }
+     public ResponseEntity<?> checkNickname(@Valid @RequestBody NicknameDTO nicknameDTO) {
          return userService.checkNickname(nicknameDTO.getName());
      }
+
+     @PutMapping("/update_nickname")
+    public ResponseEntity<?> updateNickname(@RequestBody NicknameDTO nicknameDTO)
+    {
+        return userService.updateNickname(nicknameDTO.getName());
+    }
 
      // 회원 가입
      @PostMapping("/register")
