@@ -34,8 +34,9 @@
      }
      // 인증 확인
      @GetMapping("/check_authentication")
-     public User checkAuthentication() {
-         return userService.getAuthenticatedUserInfo();
+     public ResponseEntity<?> checkAuthentication() {
+         return userService.checkAuthentication();
+
      }
 
      // 닉네임 중복 확인
@@ -55,7 +56,7 @@
      public ResponseEntity<?> register(@Valid @RequestBody CreateUserDto createUserDto, BindingResult bindingResult) {
 
          if (bindingResult.hasErrors()) {
-             return ResponseEntity.badRequest().body("Invalid request.");
+             return ResponseEntity.badRequest().body("잘못된 요청입니다");
          }
          return userService.save(createUserDto);
      }

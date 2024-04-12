@@ -217,10 +217,9 @@
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
-
+    //인증유저 정보 조회(USER)
     public User getAuthenticatedUserInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
          if (authentication == null || !authentication.isAuthenticated() ||
                  authentication instanceof AnonymousAuthenticationToken) {
              throw new IllegalArgumentException("로그인이 필요합니다.");
@@ -237,5 +236,24 @@
              return getUserInfo(authentication.getName());
          }
     }
+    //인증된 사용자 인지확인
+     public ResponseEntity<?> checkAuthentication() {
+         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+         if (authentication == null || !authentication.isAuthenticated() ||
+                 authentication instanceof AnonymousAuthenticationToken) {
+             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("다시 로그인해주십시요");
+         }
+         return ResponseEntity.ok(refreshToken());
+     }
 
+     //토큰 갱신
+    public ResponseEntity<?> refreshToken() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated() ||
+                authentication instanceof AnonymousAuthenticationToken) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("다시 로그인해주십시요");
+        }
+        String token = jwtTokenProvider.generateToken(authentication);
+        return ResponseEntity.ok(token);
+    }
  }
