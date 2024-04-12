@@ -39,11 +39,11 @@
      }
 
      // 닉네임 중복 확인
-     @GetMapping("/check_nickname")
-     public ResponseEntity<?> checkNickname(@Valid @ModelAttribute NicknameDTO nicknameDTO, BindingResult bindingResult) {
-         if (bindingResult.hasErrors()) {
-             return ResponseEntity.badRequest().body(Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage());
-         }
+     @PostMapping("/check_nickname")
+     public ResponseEntity<?> checkNickname(@Valid @RequestBody NicknameDTO nicknameDTO, BindingResult bindingResult) {
+//         if (bindingResult.hasErrors()) {
+//             return ResponseEntity.badRequest().body(Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage());
+//         }
          return userService.checkNickname(nicknameDTO.getName());
      }
 
