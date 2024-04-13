@@ -51,6 +51,12 @@
         return userService.updateNickname(nicknameDTO.getName());
     }
 
+     @PutMapping("/update_avatar")
+     public ResponseEntity<?> updateCharacterNum(@RequestBody String characterNum)
+     {
+         return userService.updateCharacterNum(characterNum);
+     }
+
      // 회원 가입
      @PostMapping("/register")
      public ResponseEntity<?> register(@Valid @RequestBody CreateUserDto createUserDto, BindingResult bindingResult) {

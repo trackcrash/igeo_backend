@@ -147,6 +147,12 @@
         }
     }
 
+     public ResponseEntity<?> updateCharacterNum(String characterNum)
+     {
+         getLoginUserInfo().setCharacter(Integer.parseInt(characterNum));
+         return ResponseEntity.ok().body("성공");
+     }
+
 
      // 유저 삭제
      public ResponseEntity<?> deleteUserByUsername() {
@@ -256,4 +262,6 @@
         String token = jwtTokenProvider.generateToken(authentication);
         return ResponseEntity.ok(token);
     }
+
+
  }

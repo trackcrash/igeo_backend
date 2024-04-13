@@ -36,3 +36,4 @@ build/
 /src/main/resources/application-igeo.properties
 /src/main/resources/application-igeo-development.properties
 src/main/resources/application-test.properties
+src/main/java/igeo/site/Test.java

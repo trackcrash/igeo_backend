@@ -39,6 +39,12 @@ public class ChatController {
             template.convertAndSend("/startMission/" + skipDto.getRoomId(), musicDto);
         }
     }
+    //새로고침 유지용
+    @MessageMapping("/get_current_music")
+    public void getCurrentMusic(@Payload SkipDto skipDto) {
+        MusicDto musicDto = musicService.getMusic(Long.valueOf(skipDto.getRoomId()));
+        template.convertAndSend("/startMission/" + skipDto.getRoomId(), musicDto);
+    }
 
     @MessageMapping("/owner_skip")
     public void ownerSkip(@Payload SkipDto skipDto) {
