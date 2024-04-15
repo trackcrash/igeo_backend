@@ -149,7 +149,9 @@
 
      public ResponseEntity<?> updateCharacterNum(String characterNum)
      {
-         getLoginUserInfo().setCharacter(Integer.parseInt(characterNum));
+         User user = getLoginUserInfo();
+         user.setCharacter(Integer.parseInt(characterNum));
+        userRepository.save(user);
          return ResponseEntity.ok().body("성공");
      }
 

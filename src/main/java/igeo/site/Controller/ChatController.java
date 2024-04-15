@@ -12,6 +12,8 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -66,5 +68,10 @@ public class ChatController {
         MissionDto missionDto = missionService.getMission(startMissionDto.getMissionId());
         roomService.selectMission(startMissionDto.getRoomId().toString(), startMissionDto.getMissionId());
         template.convertAndSend("/missionSelect/" + startMissionDto.getRoomId(), missionDto);
+    }
+
+    @MessageMapping("/get/{roomId}")
+    public void getRoom(@PathVariable String roomId) {
+        template.convertAndSend("/chat/" + roomId,roomService.getRoomStatus(roomId));
     }
 }

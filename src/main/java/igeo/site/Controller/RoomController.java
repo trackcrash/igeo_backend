@@ -61,9 +61,4 @@ public class RoomController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/get/{roomId}")
-    public ResponseEntity<?> getRoom(@PathVariable String roomId) {
-        return ResponseEntity.ok(roomService.getRoomStatus(roomId));
-    }
-
 }
