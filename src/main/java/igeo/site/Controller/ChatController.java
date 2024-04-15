@@ -8,6 +8,7 @@ import igeo.site.Service.RoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -71,7 +72,7 @@ public class ChatController {
     }
 
     @MessageMapping("/get/{roomId}")
-    public void getRoom(@PathVariable String roomId) {
+    public void getRoom(@DestinationVariable String roomId) {
         template.convertAndSend("/chat/" + roomId,roomService.getRoomStatus(roomId));
     }
 }
