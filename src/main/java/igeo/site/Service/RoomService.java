@@ -44,6 +44,9 @@ public class RoomService {
         return roomTracker.addSkipVote(roomId, user);
     }
 
+    public int getRoomCount(String roomId) {
+        return roomTracker.getRoom(roomId).getSkipVotesCount();
+    }
     //방장스킵
     public boolean ownerSkipVote(String roomId, String userName) {
         User user = userService.getUserByName(userName);

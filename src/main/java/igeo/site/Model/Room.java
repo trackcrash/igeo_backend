@@ -53,6 +53,10 @@ public class Room {
             return count-1;
         }
     }
+    public int getSkipVotesCount() {
+        return skipVotes.size();
+    }
+
     //스킵투표 초기화
     public void clearSkipVotes() {
         skipVotes.clear();

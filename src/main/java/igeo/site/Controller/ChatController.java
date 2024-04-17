@@ -40,6 +40,9 @@ public class ChatController {
         if(result){
             MusicDto musicDto = musicService.getNextMusic(Long.valueOf(skipDto.getRoomId()));
             template.convertAndSend("/startMission/" + skipDto.getRoomId(), musicDto);
+        }else{
+            int count = roomService.getRoomCount(skipDto.getRoomId());
+            template.convertAndSend("/skip/" + skipDto.getRoomId(), count);
         }
     }
     //새로고침 유지용
