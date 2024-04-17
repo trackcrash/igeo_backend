@@ -16,7 +16,7 @@ public class SocketConfig implements WebSocketMessageBrokerConfigurer {
     }
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/chat", "/startMission", "/missionSelect");
+        config.enableSimpleBroker("/chat", "/startMission", "/missionSelect", "/skip");
         config.setApplicationDestinationPrefixes("/app");
     }
 }
