@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
+
 @Controller
 @RequiredArgsConstructor
 public class ChatController {
@@ -37,10 +39,18 @@ public class ChatController {
     @MessageMapping("/skip")
     public void skip(@Payload SkipDto skipDto) {
         boolean result = roomService.addSkipVote(skipDto.getRoomId(), skipDto.getUserName());
-        if(result){
+        if (result) {
             MusicDto musicDto = musicService.getNextMusic(Long.valueOf(skipDto.getRoomId()));
-            template.convertAndSend("/startMission/" + skipDto.getRoomId(), musicDto);
-        }else{
+            if (musicDto == null) {
+                // 게임 종료 로직
+                List<EndOfGameDto> endOfGameDtoList = musicService.endOfGame(Long.valueOf(skipDto.getRoomId()));
+                template.convertAndSend("/startMission/" + skipDto.getRoomId(), endOfGameDtoList);
+            } else {
+                // 다음 음악 재생 로직
+                template.convertAndSend("/startMission/" + skipDto.getRoomId(), musicDto);
+            }
+        } else {
+            // 스킵 투표 실패 시 현재 투표 수 전송
             int count = roomService.getRoomCount(skipDto.getRoomId());
             template.convertAndSend("/skip/" + skipDto.getRoomId(), count);
         }

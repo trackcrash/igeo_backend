@@ -3,6 +3,7 @@ package igeo.site.Service;
 import igeo.site.DTO.AnswerDto;
 import igeo.site.DTO.ChatDto;
 import igeo.site.DTO.ResponseAnswerDto;
+import igeo.site.Game.LevelManager;
 import igeo.site.Game.MissionTracker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ public class ChatService {
 
     private final MissionTracker missionTracker;
     private final MusicService musicService;
+    private final LevelManager levelManager;
 
     public Object message(ChatDto chatDto, Long roomId) {
         switch(chatDto.getType()) {
@@ -28,6 +30,7 @@ public class ChatService {
                     currentAnswer.setMessage(chatDto.getMessage());
                     chatDto.setMessage(chatDto.getSender() + "님이 정답을 맞추셨습니다.");
                     chatDto.setSender("System");
+                    levelManager.addExp(chatDto.getSender());
                     return ResponseAnswerDto.builder()
                             .answer(currentAnswer)
                             .chat(chatDto)

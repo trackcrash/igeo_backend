@@ -1,10 +1,8 @@
  package igeo.site.Service;
 
- import igeo.site.DTO.CreateUserDto;
- import igeo.site.DTO.LoginResponseDto;
- import igeo.site.DTO.UpdateProfileDto;
- import igeo.site.DTO.UserLoginDto;
+ import igeo.site.DTO.*;
  import igeo.site.Model.CustumOAuth2User;
+ import igeo.site.Model.Room;
  import igeo.site.Provider.JwtTokenProvider;
  import jakarta.servlet.http.HttpServletResponse;
  import lombok.RequiredArgsConstructor;
@@ -49,7 +47,7 @@
      private final UserRepository userRepository;
      private final PasswordEncoder passwordEncoder;
      private final AuthenticationManager authenticationManager;
-
+     private final RoomService roomService;
      // 사용자 저장
      public ResponseEntity<?> save(CreateUserDto createUserDto){
 
@@ -265,5 +263,22 @@
         return ResponseEntity.ok(token);
     }
 
+    //EndGameDto정보 조회해서 리턴
+     public List<EndOfGameDto> getEndOfGameDtos(String roomId) {
+         Room room = roomService.getRoom(roomId);
+         //room의 currentUsers를 순회하며 EndOfGameDto를 생성하여 리스트에 추가
+        List<EndOfGameDto> endOfGameDtos = room.getCurrentUsers().stream()
+                 .map(userId -> {
+                     User user = getUserById(userId);
+                     return EndOfGameDto.builder()
+                             .name(user.getName())
+                             .level(user.getLevel())
+                             .exp(user.getExp())
+                             .nextExp(user.getNextExp())
+                             .build();
+                 })
+                 .toList();
+         return endOfGameDtos;
+     }
 
  }

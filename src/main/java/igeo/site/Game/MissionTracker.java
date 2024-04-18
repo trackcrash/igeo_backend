@@ -5,6 +5,7 @@ import igeo.site.Model.Answer;
 import igeo.site.Model.Category;
 import igeo.site.Model.Image;
 import igeo.site.Model.Music;
+import igeo.site.Service.RoomService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -205,6 +206,14 @@ public class MissionTracker {
         if (newCurrentIndex >= 0 && newCurrentIndex < musicLists.get(roomId).size() - 1) {
             currentIndex.put(roomId, newCurrentIndex + 1);
         }
+
+    }
+    //게임 종료
+    public void endGame(Long roomId) {
+        currentIndex.remove(roomId);
+        musicLists.remove(roomId);
+        answers.remove(roomId);
+        answerDtos.remove(roomId);
     }
     public void nextImage(Long roomId) {
         int newCurrentIndex = getCurrentIndex(roomId);

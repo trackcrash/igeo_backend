@@ -13,6 +13,7 @@ public class Room {
     private String roomName;
     private String owner;
     private String password;
+    private boolean isPlaying;
     private int maxUsers;
     private Set<Long> currentUsers = ConcurrentHashMap.newKeySet();
     private Set<Long> skipVotes = ConcurrentHashMap.newKeySet();
@@ -22,6 +23,7 @@ public class Room {
         this.type = createRoomDto.getType();
         this.roomName = createRoomDto.getRoomName();
         this.roomId = roomId;
+        this.isPlaying = false;
         this.owner = createRoomDto.getSender();
         this.password = createRoomDto.getPassword();
         this.maxUsers = createRoomDto.getMaxUser();

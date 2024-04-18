@@ -1,6 +1,7 @@
 package igeo.site.Service;
 
 import igeo.site.DTO.AnswerDto;
+import igeo.site.DTO.EndOfGameDto;
 import igeo.site.DTO.MusicDto;
 import igeo.site.Game.MissionTracker;
 import igeo.site.Model.Answer;
@@ -9,6 +10,7 @@ import igeo.site.Model.Music;
 import igeo.site.Repository.MusicRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +20,8 @@ import java.util.List;
 public class MusicService {
 
     private final MusicRepository musicRepository;
+    private final RoomService roomService;
+    private final UserService userService;
 
     //음악관리를 위한 tracker 사용
     private final MissionTracker tracker;
@@ -104,10 +108,16 @@ public class MusicService {
         String rawAnswer = currentMusic.getAnswer();
         String categoryData = currentMusic.getCategory();
         tracker.createAnswer(roomId, rawAnswer, categoryData);
-        if (currentIndex >= 0 && currentIndex < missionList.size()) {
+        if (currentIndex < missionList.size()) {
             return transferMusicData(missionList, currentIndex);
         }
         return null;
+    }
+
+    public List<EndOfGameDto> endOfGame(Long roomId){
+        tracker.endGame(roomId);
+        roomService.endGame(roomId.toString());
+        return userService.getEndOfGameDtos(roomId.toString());
     }
 
     //음악 가져오기

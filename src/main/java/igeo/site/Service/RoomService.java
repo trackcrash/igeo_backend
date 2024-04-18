@@ -122,4 +122,13 @@ public class RoomService {
                         .roomId(roomId)
                 .build());
     }
+    //룸 반환
+    public Room getRoom(String roomId) {
+        return roomTracker.getRoom(roomId);
+    }
+
+    //게임종료시 초기화
+    public void endGame(String roomId) {
+        roomTracker.getRoom(roomId).setPlaying(false);
+    }
 }
