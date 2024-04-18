@@ -28,9 +28,9 @@ public class ChatService {
                 if(missionTracker.checkAnswer(roomId, msg)){
                     AnswerDto currentAnswer = musicService.getCurrentAnswer(roomId);
                     currentAnswer.setMessage(chatDto.getMessage());
+                    levelManager.addExp(chatDto.getSender());
                     chatDto.setMessage(chatDto.getSender() + "님이 정답을 맞추셨습니다.");
                     chatDto.setSender("System");
-                    levelManager.addExp(chatDto.getSender());
                     return ResponseAnswerDto.builder()
                             .answer(currentAnswer)
                             .chat(chatDto)
