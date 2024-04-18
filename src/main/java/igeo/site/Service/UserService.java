@@ -47,7 +47,6 @@
      private final UserRepository userRepository;
      private final PasswordEncoder passwordEncoder;
      private final AuthenticationManager authenticationManager;
-     private final RoomService roomService;
      // 사용자 저장
      public ResponseEntity<?> save(CreateUserDto createUserDto){
 
@@ -264,8 +263,7 @@
     }
 
     //EndGameDto정보 조회해서 리턴
-     public List<EndOfGameDto> getEndOfGameDtos(String roomId) {
-         Room room = roomService.getRoom(roomId);
+     public List<EndOfGameDto> getEndOfGameDtos(String roomId,Room room) {
          //room의 currentUsers를 순회하며 EndOfGameDto를 생성하여 리스트에 추가
         List<EndOfGameDto> endOfGameDtos = room.getCurrentUsers().stream()
                  .map(userId -> {

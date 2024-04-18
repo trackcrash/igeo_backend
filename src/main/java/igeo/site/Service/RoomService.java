@@ -128,7 +128,8 @@ public class RoomService {
     }
 
     //게임종료시 초기화
-    public void endGame(String roomId) {
+    public List<EndOfGameDto> endGame(String roomId) {
         roomTracker.getRoom(roomId).setPlaying(false);
+        return userService.getEndOfGameDtos(roomId, roomTracker.getRoom(roomId));
     }
 }

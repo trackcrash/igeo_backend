@@ -43,7 +43,7 @@ public class ChatController {
             MusicDto musicDto = musicService.getNextMusic(Long.valueOf(skipDto.getRoomId()));
             if (musicDto == null) {
                 // 게임 종료 로직
-                List<EndOfGameDto> endOfGameDtoList = musicService.endOfGame(Long.valueOf(skipDto.getRoomId()));
+                List<EndOfGameDto> endOfGameDtoList = roomService.endGame(skipDto.getRoomId());
                 template.convertAndSend("/startMission/" + skipDto.getRoomId(), endOfGameDtoList);
             } else {
                 // 다음 음악 재생 로직
