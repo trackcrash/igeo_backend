@@ -189,6 +189,7 @@ public class MissionService {
                 .user_id(mission.getUser().getId())
                 .musics(musicDtos)
                 .images(imageDtos)
+                .mapType(mission.getMapType())
                 .numberOfQuestion(mission.getNumberOfQuestion())
                 .build();
     }
