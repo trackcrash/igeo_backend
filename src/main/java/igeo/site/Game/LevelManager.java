@@ -27,6 +27,7 @@ public class LevelManager {
         User user = CheckUser(userId);
         user.setLevel(user.getLevel() + 1);
         user.setNextExp(levelUpSystem(user.getLevel()));
+        userRepository.save(user);
     }
 
     //exp 추가
@@ -38,6 +39,7 @@ public class LevelManager {
             user.setExp(user.getExp() - user.getNextExp());
             levelUp(userId);
         }
+        userRepository.save(user);
     }
 
 }
