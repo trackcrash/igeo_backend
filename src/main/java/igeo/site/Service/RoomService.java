@@ -69,6 +69,7 @@ public class RoomService {
             temp.setOwner(room.getOwner());
             temp.setMaxUsers(room.getMaxUsers());
             temp.setCurrentUsers(room.getCurrentUsersCount());
+            temp.setPlaying(room.isPlaying());
             if(room.getMissionId()!=null){
                 Mission mission = missionService.getMissionById(room.getMissionId());
                 temp.setMapType(mission.getMapType());

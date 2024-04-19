@@ -21,9 +21,10 @@ public class RoomListDto implements Serializable {
     private Long currentUsers;
     private String mapType;
     private String thumbnail;
+    private boolean isPlaying;
 
     @Builder
-    public RoomListDto(String roomId, CreateRoomDto.RoomType type, String roomName, String owner, String password, int maxUsers, Long currentUsers, String mapType, String thumbnail) {
+    public RoomListDto(String roomId, CreateRoomDto.RoomType type, String roomName, String owner, String password, int maxUsers, Long currentUsers, String mapType, String thumbnail, boolean isPlaying) {
         this.roomId = roomId;
         this.type = type;
         this.roomName = roomName;
@@ -33,5 +34,6 @@ public class RoomListDto implements Serializable {
         this.currentUsers = currentUsers;
         this.mapType = mapType;
         this.thumbnail = thumbnail;
+        this.isPlaying = isPlaying;
     }
 }
