@@ -108,11 +108,12 @@ public class MusicService {
         tracker.nextMusic(roomId);
         List<Music> missionList = tracker.getMusicList(roomId);
         int currentIndex = tracker.getCurrentIndex(roomId);
-        Music currentMusic = missionList.get(currentIndex);
-        String rawAnswer = currentMusic.getAnswer();
-        String categoryData = currentMusic.getCategory();
-        tracker.createAnswer(roomId, rawAnswer, categoryData);
+
         if (currentIndex < missionList.size()) {
+            Music currentMusic = missionList.get(currentIndex);
+            String rawAnswer = currentMusic.getAnswer();
+            String categoryData = currentMusic.getCategory();
+            tracker.createAnswer(roomId, rawAnswer, categoryData);
             return transferMusicData(missionList, currentIndex);
         }
         tracker.endGame(roomId);

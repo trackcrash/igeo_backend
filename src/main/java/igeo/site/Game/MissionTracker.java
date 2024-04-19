@@ -203,7 +203,7 @@ public class MissionTracker {
     //다음 곡 가져오기
     public void nextMusic(Long roomId) {
         int newCurrentIndex = getCurrentIndex(roomId);
-        if (newCurrentIndex >= 0 && newCurrentIndex < musicLists.get(roomId).size() - 1) {
+        if (newCurrentIndex >= 0 && newCurrentIndex < musicLists.get(roomId).size()) {
             currentIndex.put(roomId, newCurrentIndex + 1);
         }
 

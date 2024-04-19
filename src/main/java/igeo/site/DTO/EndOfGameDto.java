@@ -1,11 +1,13 @@
 package igeo.site.DTO;
 
 import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
 @NoArgsConstructor
+@Data
 public class EndOfGameDto implements Serializable {
     private String name;
     private int level;
