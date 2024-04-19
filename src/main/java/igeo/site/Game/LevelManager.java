@@ -2,7 +2,6 @@ package igeo.site.Game;
 
 import igeo.site.Model.User;
 import igeo.site.Repository.UserRepository;
-import igeo.site.Service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

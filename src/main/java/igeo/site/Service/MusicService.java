@@ -4,6 +4,7 @@ import igeo.site.DTO.AnswerDto;
 import igeo.site.DTO.EndOfGameDto;
 import igeo.site.DTO.MusicDto;
 import igeo.site.Game.MissionTracker;
+import igeo.site.Game.RoomTracker;
 import igeo.site.Model.Answer;
 import igeo.site.Model.Mission;
 import igeo.site.Model.Music;
@@ -22,6 +23,7 @@ public class MusicService {
 
     private final MusicRepository musicRepository;
 
+    private final RoomTracker roomTracker;
     //음악관리를 위한 tracker 사용
     private final MissionTracker tracker;
 
@@ -43,6 +45,8 @@ public class MusicService {
                 .startTime(music.getStartTime())
                 .endTime(music.getEndTime())
                 .category(music.getCategory())
+                .CurrentMusicIndex(index)
+                .TotalMusicCount(musicList.size())
                 .build();
     }
 
@@ -84,6 +88,7 @@ public class MusicService {
         tracker.shuffleMusic(musicList);
         tracker.setMusicList(roomId, musicList);
         tracker.setCurrentMusic(roomId, 0);
+        roomTracker.startGame(roomId.toString());
         Music currentMusic = musicList.get(0);
         String rawAnswer = currentMusic.getAnswer();
         String categoryData = currentMusic.getCategory();

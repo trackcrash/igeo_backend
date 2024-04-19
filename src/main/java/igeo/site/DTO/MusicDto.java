@@ -18,9 +18,11 @@ public class MusicDto implements Serializable {
     private String startTime;
     private String endTime;
     private String category;
+    private int CurrentMusicIndex;
+    private int TotalMusicCount;
 
     @Builder
-    public MusicDto(Long id,String title, String song, String youtube_url, String answer, String hint, String startTime, String endTime, String category) {
+    public MusicDto(Long id,String title, String song, String youtube_url, String answer, String hint, String startTime, String endTime, String category, int CurrentMusicIndex, int TotalMusicCount) {
         this.id = id;
         this.title = title;
         this.song = song;
@@ -30,6 +32,8 @@ public class MusicDto implements Serializable {
         this.startTime = startTime;
         this.endTime = endTime;
         this.category = category;
+        this.CurrentMusicIndex = CurrentMusicIndex;
+        this.TotalMusicCount = TotalMusicCount;
     }
 
 }

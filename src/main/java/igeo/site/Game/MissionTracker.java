@@ -233,6 +233,10 @@ public class MissionTracker {
     public List<Music> getMusicList(Long roomId) {
         return musicLists.getOrDefault(roomId, new ArrayList<>());
     }
+    //음악리스트 길이리턴
+    public int getMusicListSize(Long roomId) {
+        return musicLists.get(roomId).size();
+    }
     public List<Image> getImageList(Long roomId) {
         return imageLists.getOrDefault(roomId, new ArrayList<>());
     }

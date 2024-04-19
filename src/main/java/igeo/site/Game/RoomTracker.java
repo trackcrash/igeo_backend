@@ -51,6 +51,11 @@ public class RoomTracker {
         return false;
     }
 
+    //게임시작 상태변경
+    public void startGame(String roomId) {
+        rooms.get(roomId).setPlaying(true);
+    }
+
     //방장 스킵
     public boolean ownerSkipVote(String roomId, User user) {
         if(rooms.containsKey(roomId)) {
