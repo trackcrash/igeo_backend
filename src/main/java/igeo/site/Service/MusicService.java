@@ -112,7 +112,7 @@ public class MusicService {
         String rawAnswer = currentMusic.getAnswer();
         String categoryData = currentMusic.getCategory();
         tracker.createAnswer(roomId, rawAnswer, categoryData);
-        if (currentIndex < missionList.size()) {
+        if (currentIndex < missionList.size()-1) {
             return transferMusicData(missionList, currentIndex);
         }
         tracker.endGame(roomId);
