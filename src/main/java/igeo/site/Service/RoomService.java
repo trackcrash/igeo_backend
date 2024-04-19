@@ -108,6 +108,7 @@ public class RoomService {
                     .nickname(user.getName())
                     .character(user.getCharacter())
                     .level(user.getLevel())
+                    .exp(user.getExp())
                     .build();
             roomUserInfos.add(roomUserInfo);
         }
@@ -119,7 +120,6 @@ public class RoomService {
                         .maxUsers(room.getMaxUsers())
                         .currentUsers(roomUserInfos)
                         .missionId(room.getMissionId())
-                        .currentUsers(roomUserInfos)
                         .roomId(roomId)
                 .build());
     }
