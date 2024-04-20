@@ -4,6 +4,7 @@ import igeo.site.Model.User;
 import igeo.site.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
@@ -23,6 +24,7 @@ public class LevelManager {
     }
 
     //레벨업
+    @Transactional
     public void levelUp(String userId) {
         User user = CheckUser(userId);
         user.setLevel(user.getLevel() + 1);
@@ -31,6 +33,7 @@ public class LevelManager {
     }
 
     //exp 추가
+    @Transactional
     public void addExp(String userId) {
         User user = CheckUser(userId);
         int exp = 1;

@@ -109,6 +109,7 @@ public class RoomService {
                     .character(user.getCharacter())
                     .level(user.getLevel())
                     .exp(user.getExp())
+                    .nextExp(user.getNextExp())
                     .build();
             roomUserInfos.add(roomUserInfo);
         }

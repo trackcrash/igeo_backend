@@ -11,12 +11,14 @@ public class RoomUserInfo implements Serializable {
     private int character;
     private int level;
     private int exp;
+    private int nextExp;
 
     @Builder
-    public RoomUserInfo(String nickname, int character, int level, int exp) {
+    public RoomUserInfo(String nickname, int character, int level, int exp, int nextExp) {
         this.nickname = nickname;
         this.character = character;
         this.level = level;
         this.exp = exp;
+        this.nextExp = nextExp;
     }
 }
