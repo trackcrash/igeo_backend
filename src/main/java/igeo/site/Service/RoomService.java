@@ -72,6 +72,7 @@ public class RoomService {
     public List<RoomListDto> getRooms() {
         List<Room> rooms = roomTracker.getRooms();
         List<RoomListDto> roomListDtos = new ArrayList<>();
+        //룸을 순회하면서 DTO로 변환
         for(Room room : rooms){
             RoomListDto temp = new RoomListDto();
             temp.setRoomId(room.getRoomId());
@@ -117,13 +118,11 @@ public class RoomService {
     public void selectMission(String roomId, Long missionId) {
         roomTracker.selectMission(roomId, missionId);
     }
-    private String nickname;
-    private int character;
-    private int level;
+
     public ResponseEntity<?> getRoomStatus(String roomId) {
         Room room = roomTracker.getRoom(roomId);
         List<RoomUserInfo> roomUserInfos = new ArrayList<>();
-
+        //룸에 있는 유저들을 DTO로 변환
         for(Long userId : room.getCurrentUsers()){
             User user = userService.getUserById(userId);
             RoomUserInfo roomUserInfo = RoomUserInfo.builder()

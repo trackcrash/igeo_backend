@@ -148,7 +148,7 @@
      {
          User user = getLoginUserInfo();
          user.setCharacter(Integer.parseInt(characterNum));
-        userRepository.save(user);
+         userRepository.save(user);
          return ResponseEntity.ok().body("성공");
      }
 
