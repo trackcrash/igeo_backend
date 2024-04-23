@@ -40,7 +40,7 @@ public class RoomTracker {
 
     //방장 변경
     public void changeOwner(String roomId, User user) {
-        rooms.get(roomId).setOwner(user.getId().toString());
+        rooms.get(roomId).setOwner(user.getName());
     }
 
     //스킵투표
