@@ -35,7 +35,7 @@ public class RoomController {
     @DeleteMapping("/leave/{roomId}/{userName}")
     public ResponseEntity<?> leaveRoom(@Valid @PathVariable String roomId, @PathVariable String userName) {
         roomService.leaveRoom(roomId, userName);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(roomService.getRoomStatus(roomId));
     }
 
     //방 리스트 가져오기
