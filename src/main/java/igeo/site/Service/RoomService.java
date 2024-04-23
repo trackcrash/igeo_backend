@@ -7,6 +7,7 @@ import igeo.site.Model.Room;
 import igeo.site.Model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -28,15 +29,25 @@ public class RoomService {
         return roomTracker.createRoom(createRoomDto, user);
     }
     //방에 유저추가
-    public boolean joinRoom(RoomDto roomDto) {
+    public ResponseEntity<?> joinRoom(RoomDto roomDto) {
         User user = userService.getAuthenticatedUserInfo();
         String roomId = roomDto.getRoomId();
         String password = roomDto.getPassword();
-        if(user != null && roomId != null && roomTracker.getRoom(roomId).getPassword().equals(password) && roomTracker.getRoom(roomId).getCurrentUsersCount() < roomTracker.getRoom(roomId).getMaxUsers()) {
-            return roomTracker.addUser(roomId, user);
-        } else {
-            return false;
+        //유저가 NULL일때
+        if (user == null) {
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 접근입니다.");
         }
+        //비밀번호 틀렸을 때
+        if (!roomTracker.getRoom(roomId).getPassword().equals(password)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("비밀번호가 틀렸습니다.");
+        }
+        //방이 꽉찼을때
+        if (roomTracker.getRoom(roomId).getCurrentUsersCount() == roomTracker.getRoom(roomId).getMaxUsers()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("방이 꽉 찼습니다.");
+        }
+        //방에 유저추가
+        roomTracker.addUser(roomId, user);
+        return ResponseEntity.ok().build();
     }
     //스킵투표
     public boolean addSkipVote(String roomId, String userName) {

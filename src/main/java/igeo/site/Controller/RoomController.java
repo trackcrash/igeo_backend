@@ -47,12 +47,7 @@ public class RoomController {
     //방 참가
     @PostMapping("/join")
     public ResponseEntity<?> joinRoom(@Valid @RequestBody RoomDto roomDto) {
-        if (roomService.joinRoom(roomDto)) {
-            return ResponseEntity.ok().build();
-        }else {
-            throw new IllegalArgumentException("오류가 발생했습니다");
-        }
-
+        return roomService.joinRoom(roomDto);
     }
 
     @PostMapping("/play/{roomId}/{missionId}")
