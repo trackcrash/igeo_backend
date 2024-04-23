@@ -38,6 +38,11 @@ public class RoomTracker {
         }
     }
 
+    //방장 변경
+    public void changeOwner(String roomId, User user) {
+        rooms.get(roomId).setOwner(user.getId().toString());
+    }
+
     //스킵투표
     public boolean addSkipVote(String roomId, User user) {
         Room room = rooms.get(roomId);

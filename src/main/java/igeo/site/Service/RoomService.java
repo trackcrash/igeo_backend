@@ -86,9 +86,20 @@ public class RoomService {
     public void leaveRoom(String roomId, String userName) {
         User user = userService.getUserByName(userName);
         roomTracker.leaveRoom(roomId, user);
+        //방장이 나갔을때
+        if (roomTracker.getRoom(roomId).getOwner().equals(userName)) {
+            roomTracker.changeOwner(roomId, userService.getUserById(roomTracker.getRoom(roomId).getCurrentUsers().iterator().next()));
+        }
+        //방에 유저가 없을때
         if (roomTracker.getRoom(roomId).getCurrentUsersCount() == 0) {
             roomTracker.deleteRoom(roomId);
         }
+    }
+
+    //방장 변경
+    public void changeOwner(String roomId, String userName) {
+        User user = userService.getUserByName(userName);
+        roomTracker.changeOwner(roomId, user);
     }
 
     //미션 선택
@@ -134,4 +145,5 @@ public class RoomService {
         roomTracker.getRoom(roomId).setPlaying(false);
         return userService.getEndOfGameDtos(roomId, roomTracker.getRoom(roomId));
     }
+
 }
