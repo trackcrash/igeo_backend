@@ -143,6 +143,7 @@ public class RoomService {
                         .currentUsers(roomUserInfos)
                         .missionId(room.getMissionId())
                         .roomId(roomId)
+                        .isPlaying(room.isPlaying())
                 .build());
     }
     //룸 반환

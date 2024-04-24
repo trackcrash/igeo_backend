@@ -16,9 +16,10 @@ public class RoomStatusDto implements Serializable {
     private int maxUsers;
     private List<RoomUserInfo> currentUsers;
     private Long missionId;
+    private boolean isPlaying;
 
     @Builder
-    public RoomStatusDto(CreateRoomDto.RoomType type, String roomId, String roomName, String owner, String password, int maxUsers, List<RoomUserInfo> currentUsers, Long missionId) {
+    public RoomStatusDto(CreateRoomDto.RoomType type, String roomId, String roomName, String owner, String password, int maxUsers, List<RoomUserInfo> currentUsers, Long missionId, boolean isPlaying) {
         this.type = type;
         this.roomId = roomId;
         this.roomName = roomName;
@@ -27,5 +28,6 @@ public class RoomStatusDto implements Serializable {
         this.maxUsers = maxUsers;
         this.currentUsers = currentUsers;
         this.missionId = missionId;
+        this.isPlaying = isPlaying;
     }
 }
