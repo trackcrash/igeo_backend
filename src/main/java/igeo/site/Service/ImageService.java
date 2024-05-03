@@ -72,7 +72,7 @@ public class ImageService {
     }
 
     //이미지 업데이트
-    public void updateImages(Long missionId, ImageDto imageDto){
+    public Image updateImages(Long missionId, ImageDto imageDto){
         Image image = getImageById(missionId);
         image.setTitle(imageDto.getTitle());
         image.setImageUrl(imageDto.getImageUrl());
@@ -81,6 +81,7 @@ public class ImageService {
         image.setStartTime(imageDto.getStartTime());
         image.setEndTime(imageDto.getEndTime());
         image.setCategory(imageDto.getCategory());
+        return imageRepository.save(image);
     }
 
     //게임 시작시 이미지 리스트 가져오기
