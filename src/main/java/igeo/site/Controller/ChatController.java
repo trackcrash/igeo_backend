@@ -1,10 +1,8 @@
 package igeo.site.Controller;
 
 import igeo.site.DTO.*;
-import igeo.site.Service.ChatService;
-import igeo.site.Service.MissionService;
-import igeo.site.Service.MusicService;
-import igeo.site.Service.RoomService;
+import igeo.site.Model.Mission;
+import igeo.site.Service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +23,7 @@ public class ChatController {
 
     private final ChatService chatService;
     private final RoomService roomService;
+    private final ImageService imageService;
     private final MusicService musicService;
     private final MissionService missionService;
     private final SimpMessagingTemplate template;
@@ -73,8 +72,14 @@ public class ChatController {
 
     @MessageMapping("/startMission")
     public void startMission(@Payload StartMissionDto startMissionDto) {
-        MusicDto musicDto = musicService.startMission(startMissionDto.getRoomId(), startMissionDto.getMissionId());
-        template.convertAndSend("/startMission/" + startMissionDto.getRoomId(), musicDto);
+        String flag = missionService.getMissionById(startMissionDto.getMissionId()).getMapType();
+        if (flag.equals("MUSIC")) {
+            MusicDto musicDto = musicService.startMission(startMissionDto.getRoomId(), startMissionDto.getMissionId());
+            template.convertAndSend("/startMission/" + startMissionDto.getRoomId(), musicDto);
+        } else {
+            ImageDto imageDto = imageService.startMission(startMissionDto.getRoomId(), startMissionDto.getMissionId());
+            template.convertAndSend("/startMission/" + startMissionDto.getRoomId(), imageDto);
+        }
     }
 
     @MessageMapping("/missionSelect")
