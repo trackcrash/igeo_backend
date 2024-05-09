@@ -38,15 +38,26 @@ public class ChatController {
     @MessageMapping("/skip")
     public void skip(@Payload SkipDto skipDto) {
         boolean result = roomService.addSkipVote(skipDto.getRoomId(), skipDto.getUserName());
+        String roomType = missionService.getMissionById(roomService.getRoom(skipDto.getRoomId()).getMissionId()).getMapType();
         if (result) {
-            MusicDto musicDto = musicService.getNextMusic(Long.valueOf(skipDto.getRoomId()));
-            if (musicDto == null) {
-                // 게임 종료 로직
-                List<EndOfGameDto> endOfGameDtoList = roomService.endGame(skipDto.getRoomId());
-                template.convertAndSend("/startMission/" + skipDto.getRoomId(), endOfGameDtoList);
+            if (roomType.equals("MUSIC")) {
+                MusicDto musicDto = musicService.getNextMusic(Long.valueOf(skipDto.getRoomId()));
+                if (musicDto == null) {
+                    // 게임 종료 로직
+                    List<EndOfGameDto> endOfGameDtoList = roomService.endGame(skipDto.getRoomId());
+                    template.convertAndSend("/startMission/" + skipDto.getRoomId(), endOfGameDtoList);
+                } else {
+                    // 다음 음악 재생 로직
+                    template.convertAndSend("/startMission/" + skipDto.getRoomId(), musicDto);
+                }
             } else {
-                // 다음 음악 재생 로직
-                template.convertAndSend("/startMission/" + skipDto.getRoomId(), musicDto);
+                ImageDto imageDto = imageService.getNextImage(Long.valueOf(skipDto.getRoomId()));
+                if (imageDto == null) {
+                    List<EndOfGameDto> endOfGameDtoList = roomService.endGame(skipDto.getRoomId());
+                    template.convertAndSend("/startMission/" + skipDto.getRoomId(), endOfGameDtoList);
+                } else {
+                    template.convertAndSend("/startMission/" + skipDto.getRoomId(), imageDto);
+                }
             }
         } else {
             // 스킵 투표 실패 시 현재 투표 수 전송

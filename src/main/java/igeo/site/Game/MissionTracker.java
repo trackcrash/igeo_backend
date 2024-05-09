@@ -212,12 +212,13 @@ public class MissionTracker {
     public void endGame(Long roomId) {
         currentIndex.remove(roomId);
         musicLists.remove(roomId);
+        imageLists.remove(roomId);
         answers.remove(roomId);
         answerDtos.remove(roomId);
     }
     public void nextImage(Long roomId) {
         int newCurrentIndex = getCurrentIndex(roomId);
-        if (newCurrentIndex >= 0 && newCurrentIndex < imageLists.get(roomId).size() - 1) {
+        if (newCurrentIndex >= 0 && newCurrentIndex < imageLists.get(roomId).size()) {
             currentIndex.put(roomId, newCurrentIndex + 1);
         }
     }
