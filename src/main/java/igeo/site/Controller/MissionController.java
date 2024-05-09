@@ -21,23 +21,20 @@ public class MissionController {
 
     //Create
     @PostMapping("/save")
-    public ResponseEntity<MissionDto> saveMission(@RequestBody MissionDto missionDto) {
-        missionService.saveMission(missionDto);
-        return ResponseEntity.ok(missionDto);
+    public ResponseEntity<?> saveMission(@RequestBody MissionDto missionDto) {
+        return missionService.saveMission(missionDto);
     }
 
     //Update
     @PutMapping("/update")
-    public ResponseEntity<MissionDto> updateMission(@RequestBody MissionDto missionDto) {
-        missionService.updateMission(missionDto);
-        return ResponseEntity.ok(missionDto);
+    public ResponseEntity<?> updateMission(@RequestBody MissionDto missionDto) {
+        return missionService.updateMission(missionDto);
     }
 
     //Delete
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<MissionDto> deleteMission(@PathVariable Long id) {
-        missionService.deleteMission(id);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> deleteMission(@PathVariable Long id) {
+        return missionService.deleteMission(id);
     }
 
     //Read

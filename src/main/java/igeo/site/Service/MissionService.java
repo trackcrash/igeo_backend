@@ -15,11 +15,14 @@ import igeo.site.Repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -37,8 +40,9 @@ public class MissionService {
     //미션 저장
     //클라이언트에서 받은 정보를 미션객체로 만들어서 저장후 음악저장
     //mission_id가 필요하기 때문에 미션 저장 후 음악 저장
-    public MissionDto saveMission(MissionDto missionDto) {
+    public ResponseEntity<?> saveMission(MissionDto missionDto) {
         User user = userService.getAuthenticatedUserInfo();
+        if (user == null) return ResponseEntity.badRequest().body("잘못된 접근입니다.");
         boolean flag = missionDto.getMapType().equals("MUSIC");
         int questionCount = 0;
         if(flag) {
@@ -70,22 +74,24 @@ public class MissionService {
                 imageService.save(missionDto.getImages().get(i), mission);
             }
         }
-
-        return missionDto;
+        return ResponseEntity.ok("미션 저장 성공");
     }
 
     //미션 수정
-    public MissionDto updateMission(MissionDto missionDto) {
-        Mission mission = missionRepository.findById(missionDto.getId()).orElseThrow(
-                () -> new IllegalStateException("존재하지 않는 미션입니다.")
-        );
-        boolean flag = missionDto.getMapType().equals("MUSIC");
-        User user = userService.getAuthenticatedUserInfo();
-        if(user == null) throw new EntityNotFoundException("잘못된 접근입니다.");
+    public ResponseEntity<?> updateMission(MissionDto missionDto) {
+        Optional<Mission> optionalMission = missionRepository.findById(missionDto.getId());
+        if (optionalMission.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("존재하지 않는 미션입니다.");
+        }
+        Mission mission = optionalMission.get();
 
+        boolean flag = missionDto.getMapType().equals("MUSIC");
+
+        User user = userService.getAuthenticatedUserInfo();
+        if(user == null) return ResponseEntity.badRequest().body("잘못된 접근입니다.");
         // 권한 확인
         if (!mission.getUser().getId().equals(user.getId())) {
-            throw new AccessDeniedException("유저정보가 다릅니다");
+            return ResponseEntity.badRequest().body("권한이 없습니다.");
         }
 
         mission.setMapName(missionDto.getMapName());
@@ -115,14 +121,16 @@ public class MissionService {
             }
         }
 
-        return missionDto;
+        return ResponseEntity.ok("미션 수정 성공");
     }
 
     //미션 삭제
-    public void deleteMission(Long missionId) {
-        Mission mission = missionRepository.findById(missionId).orElseThrow(
-                () -> new IllegalStateException("존재하지 않는 미션입니다.")
-        );
+    public ResponseEntity<?> deleteMission(Long missionId) {
+        Optional<Mission> optionalMission = missionRepository.findById(missionId);
+        if (optionalMission.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("존재하지 않는 미션입니다.");
+        }
+        Mission mission = optionalMission.get();
         List<Music> musics = musicService.getMusicByMission(missionId);
         if(!musics.isEmpty()) {
             for (Music music : musics) {
@@ -140,9 +148,9 @@ public class MissionService {
 
         // 사용자 인증 정보 확인
         User user = userService.getAuthenticatedUserInfo();
-        if(user == null) throw new EntityNotFoundException("잘못된 접근입니다");
+        if(user == null) return ResponseEntity.badRequest().body("잘못된 접근입니다.");
         missionRepository.delete(mission);
-
+        return ResponseEntity.ok("미션 삭제 성공");
     }
 
     //미션선택 목록 조회
