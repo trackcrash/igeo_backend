@@ -127,6 +127,7 @@ public class RoomService {
             User user = userService.getUserById(userId);
             RoomUserInfo roomUserInfo = RoomUserInfo.builder()
                     .nickname(user.getName())
+                    .userId(user.getId())
                     .character(user.getCharacter())
                     .level(user.getLevel())
                     .exp(user.getExp())

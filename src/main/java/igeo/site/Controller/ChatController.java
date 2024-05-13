@@ -1,7 +1,9 @@
 package igeo.site.Controller;
 
 import igeo.site.DTO.*;
+import igeo.site.Game.RoomTracker;
 import igeo.site.Model.Mission;
+import igeo.site.Model.Room;
 import igeo.site.Service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Controller
 @RequiredArgsConstructor
@@ -61,8 +65,8 @@ public class ChatController {
             }
         } else {
             // 스킵 투표 실패 시 현재 투표 수 전송
-            int count = roomService.getRoomCount(skipDto.getRoomId());
-            template.convertAndSend("/skip/" + skipDto.getRoomId(), count);
+            Set<Long> skippedUsersList = roomService.getRoom(skipDto.getRoomId()).getSkippedUserIds();
+            template.convertAndSend("/skip/" + skipDto.getRoomId(), skippedUsersList);
         }
     }
     //새로고침 유지용

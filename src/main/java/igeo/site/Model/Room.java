@@ -59,6 +59,10 @@ public class Room {
         return skipVotes.size();
     }
 
+    public Set<Long> getSkippedUserIds() {
+        return skipVotes;
+    }
+
     //스킵투표 초기화
     public void clearSkipVotes() {
         skipVotes.clear();
