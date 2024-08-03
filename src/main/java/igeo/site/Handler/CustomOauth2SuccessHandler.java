@@ -32,7 +32,7 @@ public class CustomOauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         String token = jwtTokenProvider.generateToken(authentication);
         String refreshToken = jwtTokenProvider.generateRefreshToken(authentication);
 //        String redirectUrl = "https://igeo.site/login/success?token=" + token + "&refreshToken=" + refreshToken  + "&nickname=" + URLEncoder.encode(name, StandardCharsets.UTF_8);
-        String redirectUrl = "http://localhost:8080/login-success?token=" + token + "&refreshToken=" + refreshToken  + "&level=" + user.getLevel() + "&nickname=" + URLEncoder.encode(user.getName(), "UTF-8")+"&Character=" + user.getCharacter();
+        String redirectUrl = "http://localhost:8080/login-success?token=" + token + "&refreshToken=" + refreshToken  + "&level=" + user.getLevel() + "&nickname=" + URLEncoder.encode(user.getName(), "UTF-8")+"&character=" + user.getCharacter();
 
         getRedirectStrategy().sendRedirect(request, response, redirectUrl);
     }

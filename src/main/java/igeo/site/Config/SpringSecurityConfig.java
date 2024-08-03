@@ -20,6 +20,7 @@
  import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
  import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
  import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+ import org.springframework.security.config.http.SessionCreationPolicy;
  import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
  import org.springframework.security.crypto.password.PasswordEncoder;
  import org.springframework.security.web.SecurityFilterChain;
@@ -46,12 +47,13 @@
                  .csrf(AbstractHttpConfigurer::disable)
                  .httpBasic(AbstractHttpConfigurer::disable)
                  .formLogin(AbstractHttpConfigurer::disable)
-                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
+                 .sessionManagement((sessionManagement) -> sessionManagement
+                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                  .authorizeHttpRequests((authorize) -> authorize
                          /*.requestMatchers("/user/register", "/", "user/login","oauth2/**").permitAll()*/
                          .requestMatchers("/**").permitAll()
 //                         .requestMatchers("/admin").hasRole("ROLE_ADMIN")
-                         .anyRequest().authenticated())
+                         .anyRequest().permitAll())
 //				.formLogin(formLogin -> formLogin
 //						.loginPage("/login")
 //						.defaultSuccessUrl("/home"))
@@ -69,6 +71,7 @@
                                  .logoutSuccessHandler(customLogoutSuccessHandler())
                                  .invalidateHttpSession(true)
                  );
+         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
          return http.build();
      }
 
