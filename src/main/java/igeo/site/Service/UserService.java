@@ -1,13 +1,11 @@
  package igeo.site.Service;
 
  import igeo.site.DTO.*;
- import igeo.site.Model.CustumOAuth2User;
+ import igeo.site.Model.CustomOAuth2User;
  import igeo.site.Model.Room;
  import igeo.site.Provider.JwtTokenProvider;
  import jakarta.servlet.http.HttpServletResponse;
  import lombok.RequiredArgsConstructor;
- import org.springframework.beans.factory.annotation.Autowired;
- import org.springframework.core.io.ClassPathResource;
  import org.springframework.http.HttpStatus;
  import org.springframework.http.ResponseEntity;
  import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -16,27 +14,18 @@
  import org.springframework.security.core.Authentication;
  import org.springframework.security.core.AuthenticationException;
  import org.springframework.security.core.context.SecurityContextHolder;
- import org.springframework.security.core.userdetails.UserDetails;
  import org.springframework.security.core.userdetails.UsernameNotFoundException;
  import org.springframework.security.crypto.password.PasswordEncoder;
- import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
- import org.springframework.security.oauth2.core.OAuth2AccessToken;
  import org.springframework.security.oauth2.core.user.OAuth2User;
  import org.springframework.stereotype.Service;
  import igeo.site.Model.User;
  import igeo.site.Repository.UserRepository;
  import org.springframework.transaction.annotation.Transactional;
- import org.springframework.ui.Model;
  import org.springframework.web.server.ResponseStatusException;
- import org.springframework.web.servlet.HttpServletBean;
  import org.springframework.web.servlet.view.RedirectView;
 
- import java.io.IOException;
  import java.io.UnsupportedEncodingException;
  import java.net.URLEncoder;
- import java.nio.file.Files;
- import java.nio.file.Paths;
- import java.util.Collections;
  import java.util.List;
 
 
@@ -81,27 +70,15 @@
              return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed");
          }
      }
-     public RedirectView GoogleLogin(CustumOAuth2User oauth2User, HttpServletResponse response) throws UnsupportedEncodingException
-     {
-         String registrationId = oauth2User.getRegistrationId();
-         // OAuth2 로그인이 성공한 경우
-         if ("google".equals(registrationId)) {
-             String email = oauth2User.getAttribute("email");
-             // JWT 토큰 생성
-             Authentication googleAuthentication = new UsernamePasswordAuthenticationToken(email, "N/A");
-             String jwtToken = jwtTokenProvider.generateToken(googleAuthentication);
-             User user = getUserInfo(email);
-
-             // 로그인 응답 데이터 준비
-             String redirectUrl = "http://localhost:3000/login-success"; // 클라이언트 측 URL
-             redirectUrl += "?token=" + jwtToken + "&level=" + user.getLevel() + "&nickname=" + URLEncoder.encode(user.getName(), "UTF-8")+"&Character=" + user.getCharacter();
-
-             // 클라이언트로 리다이렉트
-             return new RedirectView(redirectUrl);
-         }
-
-         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 접근입니다.");
+     public RedirectView googleLogin(String jwtToken, String refreshToken, String name, String level, String character) throws UnsupportedEncodingException {
+         String redirectUrl = "http://localhost:3000/login-success?token=" + jwtToken
+                 + "&refreshToken=" + refreshToken
+                 + "&nickname=" + URLEncoder.encode(name, "UTF-8")
+                 + "&level=" + level
+                 + "&character=" + URLEncoder.encode(character, "UTF-8");
+         return new RedirectView(redirectUrl);
      }
+
      // 로그인된 유저 정보 조회
      public User getLoginUserInfo() {
          Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

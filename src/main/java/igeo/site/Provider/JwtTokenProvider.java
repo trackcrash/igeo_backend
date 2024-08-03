@@ -18,12 +18,26 @@ public class JwtTokenProvider {
     private String secretKey;
     @Value("${jwt.expiration}")
     private int expiration;
+    private static final int refreshExpiration = 1000 * 60 * 60 * 24 * 7;
     public String generateToken(Authentication authentication)
     {
         Claims claims = Jwts.claims().setSubject(authentication.getName());
         claims.put("authorities", authentication.getAuthorities());
         Date now = new Date();
         Date expirationTime = new Date(now.getTime() + expiration); // 토큰 만료 시간 설정
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(expirationTime)
+                .signWith(SignatureAlgorithm.HS256, secretKey.getBytes())
+                .compact();
+    }
+
+    public String generateRefreshToken(Authentication authentication) {
+        Claims claims = Jwts.claims().setSubject(authentication.getName());
+        claims.put("authorities", authentication.getAuthorities());
+        Date now = new Date();
+        Date expirationTime = new Date(now.getTime() + refreshExpiration); // 토큰 만료 시간 설정
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)

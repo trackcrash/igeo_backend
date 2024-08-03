@@ -8,11 +8,11 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import java.util.Collection;
 import java.util.Map;
 
-public class CustumOAuth2User implements OAuth2User {
+public class CustomOAuth2User implements OAuth2User {
     @Getter
     private final String registrationId;
     private final OAuth2User oAuth2User;
-    public CustumOAuth2User(OAuth2User oAuth2User, String registrationId) {
+    public CustomOAuth2User(OAuth2User oAuth2User, String registrationId) {
         this.oAuth2User = oAuth2User;
         this.registrationId = registrationId;
     }

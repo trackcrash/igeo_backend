@@ -1,7 +1,7 @@
 package igeo.site.Auth;
 
 import igeo.site.DTO.CreateUserDto;
-import igeo.site.Model.CustumOAuth2User;
+import igeo.site.Model.CustomOAuth2User;
 import igeo.site.Model.User;
 import igeo.site.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +10,6 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
-
-import java.util.Map;
 
 @Service
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
@@ -25,7 +23,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         // 회원 가입 여부 체크 및 처리
         processOAuth2User(oauth2User);
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
-        return new CustumOAuth2User(oauth2User,registrationId);
+        return new CustomOAuth2User(oauth2User,registrationId);
     }
 
     private void processOAuth2User(OAuth2User oauth2User) {
