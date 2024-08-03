@@ -10,7 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-@Table(name="missionTable")
+@Table(name="MissionTable")
 public class Mission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
